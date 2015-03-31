@@ -1,0 +1,2 @@
+includeFlat 'vertx-hibernate'
+includeFlat 'vertx-mvc'
