@@ -8,39 +8,39 @@
 
     </head>
     <body>
-		<div id="main-menu">
-			<nav class="top-bar" data-topbar role="navigation">
-				<ul class="title-area">
-					<li class="name">
-						<h1><a href="#">Projuice</a></h1>
+	<div id="main-menu">
+		<nav class="top-bar" data-topbar role="navigation">
+			<ul class="title-area">
+				<li class="name">
+					<h1><a href="#">Projuice</a></h1>
+				</li>
+				<li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+			</ul>
+
+			<section class="top-bar-section">
+				<ul class="right">
+					{{#if credentials}}
+					<li><a href="#">Hello {{username}}</a></li>
+					{{else}}
+					<li><a href="#">Log in</a></li>
+					<li class="has-dropdown">
+						<a href="#">Sign up</a>
+						<ul class="dropdown">
+							<li><a href="#">Using your Github account</a></li>
+							<li><a href="#">Using your email address</a></li>
+						</ul>
 					</li>
-					<li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+					{{/if}}
 				</ul>
-	
-				<section class="top-bar-section">
-					<ul class="right">
-						{{#if credentials}}
-						<li><a href="#">Hello {{username}}</a></li>
-                        {{else}}
-						<li><a href="#">Log in</a></li>
-						<li class="has-dropdown">
-							<a href="#">Sign up</a>
-							<ul class="dropdown">
-								<li><a href="#">Using your Github account</a></li>
-								<li><a href="#">Using your email address</a></li>
-							</ul>
-						</li>
-						{{/if}}
-					</ul>
-					
-					<ul class="left">
-						<li class="active"><a href="#">Projects</a></li>
-					</ul>
-				</section>
-			</nav>
+
+				<ul class="left">
+					<li class="active"><a href="#">Projects</a></li>
+				</ul>
+			</section>
+		</nav>
 		</div>
-		
-        {{#block "content" }}
-        {{/block}}
-    </body>
+
+		{{#block "content" }}
+		{{/block}}
+	</body>
 </html>
