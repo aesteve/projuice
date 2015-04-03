@@ -3,53 +3,70 @@ package io.projuice.controllers.api;
 import io.projuice.WebVerticle;
 import io.projuice.model.Project;
 import io.vertx.ext.apex.RoutingContext;
-import io.vertx.hibernate.HibernateService;
+import io.vertx.hibernate.results.ListAndCount;
 import io.vertx.mvc.annotations.Controller;
-import io.vertx.mvc.annotations.Path;
-import io.vertx.mvc.annotations.params.Param;
+import io.vertx.mvc.annotations.params.PathParam;
+import io.vertx.mvc.annotations.params.RequestBody;
+import io.vertx.mvc.annotations.routing.GET;
+import io.vertx.mvc.annotations.routing.POST;
+import io.vertx.mvc.annotations.routing.PUT;
+import io.vertx.mvc.annotations.routing.Path;
 import io.vertx.mvc.context.PaginationContext;
 import io.vertx.mvc.controllers.impl.JsonApiController;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 
 @Controller("/api/1/projects")
 public class ProjectApiController extends JsonApiController {
 	
 	@Path("")
 	public void list(RoutingContext context, PaginationContext pageContext) {
-		HibernateService service = WebVerticle.hibernateService;
-		service.createSession(sessionHandler -> {
-			if (sessionHandler.failed()) {
-				context.fail(sessionHandler.cause());
+		WebVerticle.hibernateService.withEntityManager(entityManager -> {
+			ListAndCount<Project> result = new ListAndCount<Project>(Project.class, entityManager);
+			result.queryAndCount(pageContext.firstItemInPage(), pageContext.lastItemInPage());
+			return result;
+		}, result -> {
+			if (result.succeeded()) {
+				ListAndCount<Project> listAndCount = result.result();
+				pageContext.setNbItems(listAndCount.count());
+				setPayload(context, listAndCount.result());
+				context.next();
 			} else {
-				String sessionId = sessionHandler.result();
-				CriteriaBuilder builder = service.getCriteriaBuilder(sessionId);
-				CriteriaQuery<Project> query = builder.createQuery(Project.class);
-				query.from(Project.class);
-				service.list(sessionId, query, pageContext.firstItemInPage(), pageContext.lastItemInPage(), queryHandler -> {
-					if (queryHandler.failed()) {
-						context.fail(queryHandler.cause());
-					} else {
-						CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
-						countQuery.select(builder.count(countQuery.from(Project.class)));
-						service.singleResult(sessionId, countQuery, countHandler -> {
-							if (countHandler.failed()) {
-								context.fail(countHandler.cause());
-							} else {
-								pageContext.setNbItems(countHandler.result());
-								setPayload(context, queryHandler.result());
-								context.next();
-							}
-						});
-					}
-				});
+				context.fail(result.cause());
 			}
 		});
 	}
 	
+	@Path("")
+	@POST
+	public void createProject(RoutingContext context, @RequestBody Project project) {
+		WebVerticle.hibernateService.withinTransaction(entityManager -> {
+			entityManager.persist(project);
+			return project;
+		}, result -> {
+			resultAsPayload(context, result);
+		});		
+	}
+	
 	@Path("/:projectId")
-	public void getProject(RoutingContext context, @Param("projectId") Long projectId) {
-		context.next();
+	@GET
+	public void getProject(RoutingContext context, @PathParam("projectId") Long projectId) {
+		WebVerticle.hibernateService.withEntityManager(entityManager -> {
+			return entityManager.find(Project.class, projectId);
+		}, result -> {
+			resultAsPayload(context, result);
+		});
+	}
+	
+	@Path("/:projectId")
+	@PUT
+	public void updateProject(RoutingContext context, @PathParam("projectId") Long projectId, @RequestBody Project project) {
+		if (project.getId() == null) {
+			project.setId(projectId);
+		}
+		WebVerticle.hibernateService.withinTransaction(entityManager -> {
+			entityManager.merge(project);
+			return project;
+		}, result -> {
+			resultAsPayload(context, result);
+		});
 	}
 }

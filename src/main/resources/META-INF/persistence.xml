@@ -7,7 +7,9 @@
 	<persistence-unit name="projuice-dev" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 
+		<class>io.projuice.model.ProjuiceUser</class>
 		<class>io.projuice.model.Project</class>
+		<class>io.projuice.model.UserRoleInProject</class>
 
 		<properties>
 			<property name="connection.driver_class" value="org.h2.Driver" />

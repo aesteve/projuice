@@ -11,8 +11,14 @@ public class Project {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	private String name;
-
-
+	private String githubUrl;
+	
+	public String getGithubUrl() {
+		return githubUrl;
+	}
+	public void setGithubUrl(String githubUrl) {
+		this.githubUrl = githubUrl;
+	}
 	public Long getId() {
 		return id;
 	}
