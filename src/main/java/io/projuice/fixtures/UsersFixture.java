@@ -1,36 +1,35 @@
 package io.projuice.fixtures;
 
 import io.projuice.WebVerticle;
-import io.projuice.model.Project;
+import io.projuice.model.ProjuiceUser;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.hibernate.HibernateService;
 import io.vertx.mvc.fixtures.Fixture;
 
-public class ProjectsFixture extends Fixture {
-
+public class UsersFixture extends Fixture {
+	
 	@Override
 	public int executionOrder() {
-		return 1;
+		return 0;
 	}
 	
 	@Override
 	public void startUp(Vertx vertx, Future<Void> future) {
 		HibernateService hibernate = WebVerticle.hibernateService;
 		hibernate.withinTransaction(em -> {
-			Project projuice = new Project();
-			projuice.setName("Projuice");
-			projuice.setDescription("The simple project manager");
-			projuice.setGithubUrl("http://github.com/aesteve/projuice");
-			em.persist(projuice);
-			return projuice;
+			ProjuiceUser arnaud = new ProjuiceUser();
+			arnaud.setUsername("Arnaud");
+			arnaud.setGithubId("aesteve");
+			em.persist(arnaud);
+			return arnaud;
 		}, res -> {
 			if (res.succeeded()) {
 				future.complete();
 			} else {
 				future.fail(res.cause());
 			}
-		});
+		});		
 	}
 
 	@Override

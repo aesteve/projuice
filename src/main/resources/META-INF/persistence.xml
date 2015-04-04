@@ -10,6 +10,8 @@
 		<class>io.projuice.model.ProjuiceUser</class>
 		<class>io.projuice.model.Project</class>
 		<class>io.projuice.model.UserRoleInProject</class>
+		<class>io.projuice.model.Issue</class>
+		<class>io.projuice.model.Label</class>
 
 		<properties>
 			<property name="connection.driver_class" value="org.h2.Driver" />
@@ -17,7 +19,7 @@
 			<property name="hibernate.connection.url" value="jdbc:h2:~/tests/h2" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
 			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.show_sql" value="false" />
 		</properties>
 	</persistence-unit>
 </persistence>

@@ -10,18 +10,17 @@ import javax.persistence.ManyToOne;
 import org.boon.json.annotations.JsonIgnore;
 
 @Entity
-public class UserRoleInProject {
+public class Label implements Comparable<Label> {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
+	private String name;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	private ProjuiceUser user;
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JsonIgnore
 	private Project project;
 	
-	private Role role;
 	
 	public Long getId() {
 		return id;
@@ -29,22 +28,23 @@ public class UserRoleInProject {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public ProjuiceUser getUser() {
-		return user;
+	public String getName() {
+		return name;
 	}
-	public void setUser(ProjuiceUser user) {
-		this.user = user;
-	}
-	public Role getRole() {
-		return role;
-	}
-	public void setRole(Role role) {
-		this.role = role;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public Project getProject() {
 		return project;
 	}
 	public void setProject(Project project) {
 		this.project = project;
+	}
+	@Override
+	public int compareTo(Label other) {
+		if (other == null) {
+			return -1;
+		}
+		return name.compareTo(other.getName());
 	}
 }

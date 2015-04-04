@@ -18,3 +18,4 @@ test-results
 test-tmp
 *.class
 .vertx
+web/node_modules
