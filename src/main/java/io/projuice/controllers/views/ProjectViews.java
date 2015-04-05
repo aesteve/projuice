@@ -5,10 +5,9 @@ import io.vertx.mvc.annotations.Controller;
 import io.vertx.mvc.annotations.View;
 import io.vertx.mvc.annotations.params.Param;
 import io.vertx.mvc.annotations.routing.Path;
-import io.vertx.mvc.controllers.impl.ViewController;
 
 @Controller("/projects")
-public class ProjectViews extends ViewController {
+public class ProjectViews {
 
 	@Path("")
 	@View("list.hbs")
