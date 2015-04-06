@@ -41,8 +41,7 @@ public class IssuesFixture extends Fixture {
 
 	@Override
 	public void tearDown(Vertx vertx, Future<Void> future) {
-		// TODO Auto-generated method stub
-
+		future.complete();
 	}
 
 }

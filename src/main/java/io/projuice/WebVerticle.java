@@ -61,14 +61,7 @@ public class WebVerticle implements Verticle {
 	
 	@Override
 	public void stop(Future<Void> stopFuture) {
-		Future<Void> mvcFuture = vertxMVC.stop();
-		mvcFuture.setHandler(result -> {
-			if (result.succeeded()) {
-				stopFuture.complete();
-			} else {
-				stopFuture.fail(result.cause());
-			}
-		});
+		vertxMVC.stop(stopFuture);
 	}
 
 	@Override
