@@ -19,4 +19,4 @@ test-tmp
 *.class
 .vertx
 web/node_modules
-web/scripts
+web/assets/scripts/*
