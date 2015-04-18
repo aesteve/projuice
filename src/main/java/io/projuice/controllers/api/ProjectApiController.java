@@ -4,16 +4,16 @@ import io.projuice.WebVerticle;
 import io.projuice.model.Project;
 import io.vertx.ext.apex.RoutingContext;
 import io.vertx.hibernate.results.ListAndCount;
-import io.vertx.mvc.annotations.Controller;
-import io.vertx.mvc.annotations.mixins.ContentType;
-import io.vertx.mvc.annotations.params.PathParam;
-import io.vertx.mvc.annotations.params.RequestBody;
-import io.vertx.mvc.annotations.routing.GET;
-import io.vertx.mvc.annotations.routing.POST;
-import io.vertx.mvc.annotations.routing.PUT;
-import io.vertx.mvc.annotations.routing.Path;
-import io.vertx.mvc.context.PaginationContext;
-import io.vertx.mvc.marshallers.Payload;
+import io.vertx.nubes.annotations.Controller;
+import io.vertx.nubes.annotations.mixins.ContentType;
+import io.vertx.nubes.annotations.params.PathParam;
+import io.vertx.nubes.annotations.params.RequestBody;
+import io.vertx.nubes.annotations.routing.GET;
+import io.vertx.nubes.annotations.routing.POST;
+import io.vertx.nubes.annotations.routing.PUT;
+import io.vertx.nubes.annotations.routing.Path;
+import io.vertx.nubes.context.PaginationContext;
+import io.vertx.nubes.marshallers.Payload;
 
 import java.util.List;
 

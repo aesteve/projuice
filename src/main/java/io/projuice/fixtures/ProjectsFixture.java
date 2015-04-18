@@ -5,7 +5,7 @@ import io.projuice.model.Project;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.hibernate.HibernateService;
-import io.vertx.mvc.fixtures.Fixture;
+import io.vertx.nubes.fixtures.Fixture;
 
 public class ProjectsFixture extends Fixture {
 

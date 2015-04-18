@@ -10,21 +10,21 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.apex.Router;
 import io.vertx.hibernate.HibernateService;
-import io.vertx.mvc.VertxMVC;
-import io.vertx.mvc.exceptions.MissingConfigurationException;
+import io.vertx.nubes.VertxNubes;
+import io.vertx.nubes.exceptions.MissingConfigurationException;
 
 public class WebVerticle implements Verticle {
 
 	private Vertx vertx;
 	private JsonObject config;
-	private VertxMVC vertxMVC;
+	private VertxNubes vertxMVC;
 	public static HibernateService hibernateService;
 	
 	
 	@Override
 	public void start(Future<Void> startFuture) {
 		try {
-			this.vertxMVC = new VertxMVC(vertx, config);
+			this.vertxMVC = new VertxNubes(vertx, config);
 			hibernateService = new HibernateService(vertx, config);
 		} catch (MissingConfigurationException mce) {
 			startFuture.fail(mce);

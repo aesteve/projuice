@@ -4,7 +4,7 @@ import io.projuice.WebVerticle;
 import io.projuice.model.*;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.mvc.fixtures.Fixture;
+import io.vertx.nubes.fixtures.Fixture;
 import io.vertx.hibernate.queries.FindBy;
 
 public class RolesFixture extends Fixture {

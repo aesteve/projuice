@@ -8,7 +8,7 @@ import io.projuice.model.ProjuiceUser;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.hibernate.queries.FindBy;
-import io.vertx.mvc.fixtures.Fixture;
+import io.vertx.nubes.fixtures.Fixture;
 
 public class IssuesFixture extends Fixture {
 
