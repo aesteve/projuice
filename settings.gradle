@@ -1,2 +1,1 @@
-includeFlat 'vertx-hibernate'
-includeFlat 'vertx-mvc'
+rootProject.name='projuice'

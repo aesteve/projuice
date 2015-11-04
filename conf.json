@@ -1,0 +1,4 @@
+{
+	"src-package": "com.github.aesteve.vertx.nubes.examples.feeds",
+	"templates": ["hbs"]
+}

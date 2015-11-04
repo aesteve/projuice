@@ -1,14 +1,19 @@
 package io.projuice.fixtures;
 
-import io.projuice.WebVerticle;
+import com.github.aesteve.nubes.hibernate.HibernateNubes;
+import com.github.aesteve.nubes.hibernate.services.HibernateService;
+import com.github.aesteve.vertx.nubes.annotations.services.Service;
+import com.github.aesteve.vertx.nubes.fixtures.Fixture;
+
 import io.projuice.model.Project;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.hibernate.HibernateService;
-import io.vertx.nubes.fixtures.Fixture;
 
 public class ProjectsFixture extends Fixture {
 
+	@Service(HibernateNubes.HIBERNATE_SERVICE_NAME)
+	private HibernateService hibernate;
+	
 	@Override
 	public int executionOrder() {
 		return 1;
@@ -16,7 +21,6 @@ public class ProjectsFixture extends Fixture {
 	
 	@Override
 	public void startUp(Vertx vertx, Future<Void> future) {
-		HibernateService hibernate = WebVerticle.hibernateService;
 		hibernate.withinTransaction(em -> {
 			Project projuice = new Project();
 			projuice.setName("Projuice");

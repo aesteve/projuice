@@ -1,99 +1,72 @@
-buildscript {
-	repositories { jcenter() }
-	dependencies {
-		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
-	}
-}
- 
-allprojects {
-    apply plugin:'java'
-    apply plugin:'eclipse'
-    apply plugin: 'com.github.johnrengelman.shadow'
- 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven { url 'http://oss.sonatype.org/content/repositories/snapshots/' }
-    }
+plugins {
+	id 'java'
+	id 'eclipse'
+	id 'idea'
+	id 'maven'
+	id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 
+group='io.projuice'
+version='0.1-SNAPSHOT'
 
-allprojects {
-	dependencies {
-		// vertx
-		compile 'io.vertx:vertx-core:3.0.0-SNAPSHOT'
-		compile 'io.vertx:vertx-apex:3.0.0-SNAPSHOT'
-		
-		runtime 'com.h2database:h2:1.4.186'
-	}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
 }
 
-project(':vertx-mvc') {
-	dependencies {
-		// reflection
-		compile 'org.reflections:reflections:0.9.9'
-		compile 'commons-beanutils:commons-beanutils:1.9.2'
-		
-		// JSON api
-		compile 'io.fastjson:boon:0.32'
-		
-		// template engines
-		compile 'com.github.jknack:handlebars:1.3.0'
-		runtime 'org.thymeleaf:thymeleaf:2.1.2.RELEASE'
-		runtime 'de.neuland-bfi:jade4j:0.4.0'
-		runtime 'org.mvel:mvel2:2.2.0.Final'
-		
-		// tests
-		testCompile group: 'io.vertx', name: 'vertx-core', version: '3.0.0-SNAPSHOT', classifier: 'tests'
-		testCompile group: 'io.vertx', name: 'vertx-unit', version: '3.0.0-SNAPSHOT'
-		testCompile 'junit:junit:4.12'
-	}
-}
+def NUBES_VERSION = '0.1-SNAPSHOT'
+def VERTX_VERSION = '3.1.0'
 
-project(':vertx-hibernate') {
-	dependencies {
-		// Reflections
-		compile 'org.reflections:reflections:0.9.9'
-		
-		// Hibernate
-		compile 'org.hibernate:hibernate-entitymanager:4.3.5.Final'
-		
-		// tests
-		testCompile group: 'io.vertx', name: 'vertx-core', version: '3.0.0-SNAPSHOT', classifier: 'tests'
-		testCompile group: 'io.vertx', name: 'vertx-unit', version: '3.0.0-SNAPSHOT'
-		testCompile 'junit:junit:4.12'
-		testCompile 'org.apache.commons:commons-lang3:3.3.2'
+dependencies {
+
+	compile "com.github.aesteve:vertx-nubes:${NUBES_VERSION}"
+	compile "com.github.aesteve:nubes-hibernate:${NUBES_VERSION}"
+	compile "io.vertx:vertx-web-templ-handlebars:${VERTX_VERSION}"
 	
-		testRuntime 'com.h2database:h2:1.4.186'
+	// Handlebars
+	compile 'com.github.jknack:handlebars:2.1.0'
+	
+	testCompile "io.vertx:vertx-unit:${VERTX_VERSION}"
+	testCompile 'junit:junit:4.12'
+}
+
+compileJava {
+	options.compilerArgs << '-parameters'
+}
+
+shadowJar  {
+	classifier = ''
+	manifest {
+		attributes 'Main-Class': 'io.vertx.core.Starter'
+		attributes 'Main-Verticle': 'java:com.github.aesteve.vertx.nubes.NubesServer'
+	}
+	mergeServiceFiles {
+		include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+	}
+	dependencies {
+		exclude(dependency('io.vertx:codegen'))
+		exclude(dependency('junit:junit'))
+		exclude(dependency('org.mvel:mvel2'))
+	}
+	into 'web', {
+		from 'web'
 	}
 }
 
-configure(rootProject) {
-    dependencies {
-        // sub-projects : FIXME : replace by bintray dependencies
-		compile project(':vertx-hibernate')
-		compile project(':vertx-mvc')
-    }
-    shadowJar  {
-        classifier = ''
-        manifest {
-            attributes 'Main-Class': 'io.vertx.core.Starter'
-            attributes 'Main-Verticle': 'java:io.projuice.WebVerticle'
-        }
-        mergeServiceFiles {
-            include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
-        }
-        dependencies {
-            exclude(dependency('io.vertx:codegen'))
-            exclude(dependency('junit:junit'))
-            exclude(dependency('org.mvel:mvel2'))
-        }
-    }
-    task start(dependsOn: shadowJar) << {
-        javaexec { main="-jar"; args shadowJar.archivePath }
-    }
+task start(dependsOn: shadowJar) << {
+	javaexec { 
+		main="-jar" 
+		args=[
+			shadowJar.archivePath, 
+			"-conf",
+			"conf.json"
+		] 
+	}
 }
+
+test.outputs.upToDateWhen { false }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '2.3'
+	gradleVersion = '2.8'
 }

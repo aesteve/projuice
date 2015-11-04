@@ -1,91 +1,58 @@
 package io.projuice.controllers.api;
 
-import io.projuice.WebVerticle;
-import io.projuice.model.Project;
-import io.vertx.ext.apex.RoutingContext;
-import io.vertx.hibernate.results.ListAndCount;
-import io.vertx.nubes.annotations.Controller;
-import io.vertx.nubes.annotations.mixins.ContentType;
-import io.vertx.nubes.annotations.params.PathParam;
-import io.vertx.nubes.annotations.params.RequestBody;
-import io.vertx.nubes.annotations.routing.GET;
-import io.vertx.nubes.annotations.routing.POST;
-import io.vertx.nubes.annotations.routing.PUT;
-import io.vertx.nubes.annotations.routing.Path;
-import io.vertx.nubes.context.PaginationContext;
-import io.vertx.nubes.marshallers.Payload;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 
-import java.util.List;
+import com.github.aesteve.nubes.hibernate.HibernateNubes;
+import com.github.aesteve.nubes.hibernate.annotations.Create;
+import com.github.aesteve.nubes.hibernate.annotations.RetrieveById;
+import com.github.aesteve.nubes.hibernate.annotations.RetrieveByQuery;
+import com.github.aesteve.nubes.hibernate.annotations.Update;
+import com.github.aesteve.nubes.hibernate.queries.FindById;
+import com.github.aesteve.nubes.hibernate.services.HibernateService;
+import com.github.aesteve.vertx.nubes.annotations.Controller;
+import com.github.aesteve.vertx.nubes.annotations.mixins.ContentType;
+import com.github.aesteve.vertx.nubes.annotations.params.Param;
+import com.github.aesteve.vertx.nubes.annotations.params.RequestBody;
+import com.github.aesteve.vertx.nubes.annotations.routing.http.GET;
+import com.github.aesteve.vertx.nubes.annotations.routing.http.POST;
+import com.github.aesteve.vertx.nubes.annotations.routing.http.PUT;
+import com.github.aesteve.vertx.nubes.annotations.services.Service;
+import com.github.aesteve.vertx.nubes.context.PaginationContext;
+
+import io.projuice.model.Project;
 
 @Controller("/api/1/projects")
 @ContentType("application/json")
 public class ProjectApiController {
+
+	@Service(HibernateNubes.HIBERNATE_SERVICE_NAME)
+	private HibernateService hibernate;
 	
-	@Path("")
-	public void list(RoutingContext context, PaginationContext pageContext, Payload<List<Project>> payload) {
-		WebVerticle.hibernateService.withEntityManager(entityManager -> {
-			ListAndCount<Project> result = new ListAndCount<Project>(Project.class, entityManager);
-			result.queryAndCount(pageContext.firstItemInPage(), pageContext.lastItemInPage());
-			return result;
-		}, result -> {
-			if (result.succeeded()) {
-				ListAndCount<Project> listAndCount = result.result();
-				pageContext.setNbItems(listAndCount.count());
-				payload.set(listAndCount.result());
-				context.next();
-			} else {
-				context.fail(result.cause());
-			}
-		});
-	}
-	
-	@Path("")
-	@POST
-	public void createProject(RoutingContext context, @RequestBody Project project, Payload<Project> payload) {
-		WebVerticle.hibernateService.withinTransaction(entityManager -> {
-			entityManager.persist(project);
-			return project;
-		}, result -> {
-			if (result.succeeded()) {
-				payload.set(result.result());
-				context.next();
-			} else {
-				context.fail(result.cause());
-			}
-		});		
-	}
-	
-	@Path("/:projectId")
 	@GET
-	public void getProject(RoutingContext context, @PathParam("projectId") Long projectId, Payload<Project> payload) {
-		WebVerticle.hibernateService.withEntityManager(entityManager -> {
-			return entityManager.find(Project.class, projectId);
-		}, result -> {
-			if (result.succeeded()) {
-				payload.set(result.result());
-				context.next();
-			} else {
-				context.fail(result.cause());
-			}
-		});
+	@RetrieveByQuery
+	public CriteriaQuery<Project> list(PaginationContext pageContext, CriteriaBuilder builder) {
+		return builder.createQuery(Project.class);
 	}
 	
-	@Path("/:projectId")
-	@PUT
-	public void updateProject(RoutingContext context, @PathParam("projectId") Long projectId, @RequestBody Project project, Payload<Project> payload) {
+	@POST
+	@Create
+	public Project createProject(@RequestBody Project project) {
+		return project;		
+	}
+	
+	@GET("/:projectId/")
+	@RetrieveById
+	public FindById<Project> getProject(@Param Long projectId) {
+		return new FindById<>(Project.class, projectId);
+	}
+	
+	@PUT("/:projectId")
+	@Update
+	public Project updateProject(@Param Long projectId, @RequestBody Project project) {
 		if (project.getId() == null) {
 			project.setId(projectId);
 		}
-		WebVerticle.hibernateService.withinTransaction(entityManager -> {
-			entityManager.merge(project);
-			return project;
-		}, result -> {
-			if (result.succeeded()) {
-				payload.set(result.result());
-				context.next();
-			} else {
-				context.fail(result.cause());
-			}
-		});
+		return project;
 	}
 }
