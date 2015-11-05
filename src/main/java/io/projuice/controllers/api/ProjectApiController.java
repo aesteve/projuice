@@ -28,31 +28,29 @@ public class ProjectApiController {
 
 	@Service(HibernateNubes.HIBERNATE_SERVICE_NAME)
 	private HibernateService hibernate;
-	
+
 	@GET
 	@RetrieveByQuery
 	public CriteriaQuery<Project> list(PaginationContext pageContext, CriteriaBuilder builder) {
 		return builder.createQuery(Project.class);
 	}
-	
+
 	@POST
 	@Create
 	public Project createProject(@RequestBody Project project) {
-		return project;		
+		return project;
 	}
-	
+
 	@GET("/:projectId/")
 	@RetrieveById
 	public FindById<Project> getProject(@Param Long projectId) {
 		return new FindById<>(Project.class, projectId);
 	}
-	
+
 	@PUT("/:projectId")
 	@Update
 	public Project updateProject(@Param Long projectId, @RequestBody Project project) {
-		if (project.getId() == null) {
-			project.setId(projectId);
-		}
+		project.setId(projectId);
 		return project;
 	}
 }
