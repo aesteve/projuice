@@ -5,6 +5,7 @@ import com.github.aesteve.nubes.hibernate.queries.FindBy;
 import com.github.aesteve.nubes.hibernate.services.HibernateService;
 import com.github.aesteve.vertx.nubes.annotations.services.Service;
 import com.github.aesteve.vertx.nubes.fixtures.Fixture;
+import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
 
 import io.projuice.model.Issue;
 import io.projuice.model.Project;
@@ -17,7 +18,7 @@ public class IssuesFixture extends Fixture {
 
 	@Service(HibernateNubes.HIBERNATE_SERVICE_NAME)
 	HibernateService hibernate;
-	
+
 	@Override
 	public int executionOrder() {
 		return 3;
@@ -25,28 +26,22 @@ public class IssuesFixture extends Fixture {
 
 	@Override
 	public void startUp(Vertx vertx, Future<Void> future) {
-		hibernate.withinTransaction( em -> {
-			Issue issue = new Issue();
+		hibernate.withinTransactionDo((em, fut) -> {
 			hibernate.findBy(em, new FindBy<ProjuiceUser>(ProjuiceUser.class, "username", "Arnaud"), res -> {
 				ProjuiceUser arnaud = res.result();
 				hibernate.findBy(em, new FindBy<Project>(Project.class, "name", "Projuice"), res2 -> {
 					Project projuice = res2.result();
+					Issue issue = new Issue();
 					issue.setProject(projuice);
 					issue.setName("Design model");
 					issue.setType(IssueType.ENHANCEMENT);
 					issue.setDescription("## Design the whole projuice working model");
 					issue.assign(arnaud);
 					em.persist(issue);
+					fut.complete();
 				});
 			});
-			return issue;
-		}, res -> {
-			if (res.succeeded()) {
-				future.complete();
-			} else {
-				future.fail(res.cause());
-			}
-		});
+		}, AsyncUtils.ignoreResult(future));
 	}
 
 	@Override
