@@ -1,4 +1,4 @@
 {
-	"src-package": "com.github.aesteve.vertx.nubes.examples.feeds",
+	"src-package": "io.projuice",
 	"templates": ["hbs"]
 }
