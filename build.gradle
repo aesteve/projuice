@@ -39,7 +39,7 @@ shadowJar  {
 	classifier = ''
 	manifest {
 		attributes 'Main-Class': 'io.vertx.core.Starter'
-		attributes 'Main-Verticle': 'java:com.github.aesteve.vertx.nubes.NubesServer'
+		attributes 'Main-Verticle': 'java:com.github.aesteve.nubes.hibernate.HibernateNubesServer'
 	}
 	mergeServiceFiles {
 		include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
