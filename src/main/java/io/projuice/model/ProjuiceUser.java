@@ -1,5 +1,12 @@
 package io.projuice.model;
 
+import io.projuice.auth.ProjuiceAuthProvider;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.User;
+
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -8,11 +15,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.boon.json.annotations.JsonIgnore;
 
 @Entity
-public class ProjuiceUser implements Comparable<ProjuiceUser> {
+public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,6 +28,7 @@ public class ProjuiceUser implements Comparable<ProjuiceUser> {
 	private String username;
 	private String emailAddress;
 	private String githubId;
+	private String password;
 
 	@ManyToMany(mappedBy = "assignees")
 	@JsonIgnore
@@ -28,6 +37,10 @@ public class ProjuiceUser implements Comparable<ProjuiceUser> {
 	@OneToMany(mappedBy = "project")
 	@JsonIgnore
 	private Set<UserRoleInProject> projects;
+
+	@Transient
+	@JsonIgnore
+	private ProjuiceAuthProvider provider;
 
 	public Long getId() {
 		return id;
@@ -77,11 +90,43 @@ public class ProjuiceUser implements Comparable<ProjuiceUser> {
 		this.issues = issues;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	@Override
 	public int compareTo(ProjuiceUser other) {
 		if (other == null) {
 			return -1;
 		}
 		return username.compareTo(other.getUsername());
+	}
+
+	@Override
+	public User isAuthorised(String authority, Handler<AsyncResult<Boolean>> resultHandler) {
+		provider.isAuthorised(this, authority, resultHandler);
+		return this;
+	}
+
+	@Override
+	public User clearCache() {
+		provider.clearFor(this);
+		return this;
+	}
+
+	@Override
+	public JsonObject principal() {
+		return new JsonObject()
+				.put("username", username)
+				.put("password", password);
+	}
+
+	@Override
+	public void setAuthProvider(AuthProvider authProvider) {
+		this.provider = (ProjuiceAuthProvider) authProvider;
 	}
 }

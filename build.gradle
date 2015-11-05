@@ -22,6 +22,8 @@ dependencies {
 
 	compile "com.github.aesteve:nubes-hibernate:${NUBES_VERSION}" // Nubes as transitive dependency
 	compile "io.vertx:vertx-web-templ-handlebars:${VERTX_VERSION}"
+	compile "io.vertx:vertx-redis-client:${VERTX_VERSION}"
+	compile "com.google.guava:guava:18.0"
 
 	// Handlebars
 	runtime 'com.github.jknack:handlebars:2.1.0'
@@ -41,7 +43,7 @@ shadowJar  {
 	classifier = ''
 	manifest {
 		attributes 'Main-Class': 'io.vertx.core.Starter'
-		attributes 'Main-Verticle': 'java:com.github.aesteve.nubes.hibernate.HibernateNubesServer'
+		attributes 'Main-Verticle': 'java:io.projuice.Server'
 	}
 	mergeServiceFiles {
 		include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
