@@ -16,12 +16,12 @@ public class ProjectViews {
 	public String listProjects() {
 		return "list.hbs";
 	}
-	
-	@GET("/projects/:projectId")
+
+	@GET("/:projectId")
 	@View
 	public String viewProject(@ContextData Map<String, Object> contextData, @Param Long projectId) {
 		contextData.put("projectId", projectId);
 		return "projects/view.hbs";
 	}
-	
+
 }
