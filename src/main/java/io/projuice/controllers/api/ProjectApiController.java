@@ -47,7 +47,7 @@ public class ProjectApiController {
 		return new FindById<>(Project.class, projectId);
 	}
 
-	@PUT("/:projectId")
+	@PUT("/:projectId/")
 	@Update
 	public Project updateProject(@Param Long projectId, @RequestBody Project project) {
 		project.setId(projectId);
