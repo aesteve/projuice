@@ -1,4 +1,5 @@
 {
 	"src-package": "io.projuice",
-	"templates": ["hbs"]
+	"templates": ["hbs"],
+	"persistence-unit": "projuice-dev"
 }
