@@ -32,7 +32,9 @@ public class ProjectApiController {
 	@GET
 	@RetrieveByQuery
 	public CriteriaQuery<Project> list(PaginationContext pageContext, CriteriaBuilder builder) {
-		return builder.createQuery(Project.class);
+		CriteriaQuery<Project> crit = builder.createQuery(Project.class);
+		crit.from(Project.class);
+		return crit;
 	}
 
 	@POST
