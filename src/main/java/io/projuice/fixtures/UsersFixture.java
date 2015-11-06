@@ -25,6 +25,7 @@ public class UsersFixture extends Fixture {
 		hibernate.withinTransaction(em -> {
 			ProjuiceUser arnaud = new ProjuiceUser();
 			arnaud.setUsername("Arnaud");
+			arnaud.setPassword("secret");
 			arnaud.setGithubId("aesteve");
 			em.persist(arnaud);
 			return arnaud;
