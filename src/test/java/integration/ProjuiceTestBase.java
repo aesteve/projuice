@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 
 @RunWith(VertxUnitRunner.class)
-public class ProjuiceTestBase {
+public abstract class ProjuiceTestBase {
 
 	protected Vertx vertx;
 
