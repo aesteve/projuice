@@ -1,16 +1,17 @@
 package io.projuice.fixtures;
 
-import com.github.aesteve.nubes.hibernate.HibernateNubes;
-import com.github.aesteve.nubes.hibernate.services.HibernateService;
-import com.github.aesteve.vertx.nubes.annotations.services.Service;
-import com.github.aesteve.vertx.nubes.fixtures.Fixture;
-import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
-
 import io.projuice.model.Project;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 
+import com.github.aesteve.nubes.hibernate.HibernateNubes;
+import com.github.aesteve.nubes.hibernate.services.HibernateService;
+import com.github.aesteve.vertx.nubes.annotations.services.Service;
+import com.github.aesteve.vertx.nubes.fixtures.Fixture;
+
 public class ProjectsFixture extends Fixture {
+
+	public static Long ProjuiceID;
 
 	@Service(HibernateNubes.HIBERNATE_SERVICE_NAME)
 	private HibernateService hibernate;
@@ -29,7 +30,15 @@ public class ProjectsFixture extends Fixture {
 			projuice.setGithubUrl("http://github.com/aesteve/projuice");
 			em.persist(projuice);
 			return projuice;
-		}, AsyncUtils.ignoreResult(future));
+		}, res -> {
+			if (res.failed()) {
+				future.fail(res.cause());
+				return;
+			}
+			Project projuice = res.result();
+			ProjuiceID = projuice.getId();
+			future.complete();
+		});
 	}
 
 	@Override
