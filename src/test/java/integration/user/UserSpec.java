@@ -67,4 +67,15 @@ public class UserSpec extends ProjuiceTestBase {
 		});
 	}
 
+	@Test
+	public void test404(TestContext context) {
+		Async async = context.async();
+		withAdminTokenDo(context, token -> {
+			getJSON(token, "/api/1/users/123456789", response -> {
+				context.assertEquals(404, response.statusCode());
+				async.complete();
+			});
+		});
+	}
+
 }
