@@ -30,6 +30,35 @@ import com.github.aesteve.vertx.nubes.exceptions.http.impl.BadRequestException;
 @ContentType("application/json")
 public class UserApiController {
 
+	// Everyone
+
+	@POST
+	@Create
+	public ProjuiceUser register(@RequestBody ProjuiceUser body) throws BadRequestException {
+		if (!body.isValid()) {
+			throw new BadRequestException();
+		}
+		return body;
+	}
+
+	// Logged users only
+
+	@GET("/me")
+	@SessionPerRequest
+	@Auth(method = API_TOKEN, authority = LOGGED_IN)
+	public ProjuiceUser getMyInfos(@User ProjuiceUser me) {
+		return me;
+	}
+
+	@GET("/:userId/")
+	@RetrieveById
+	@Auth(method = API_TOKEN, authority = LOGGED_IN)
+	public FindById<ProjuiceUser> getUserInfos(@Param Long userId) {
+		return new FindById<ProjuiceUser>(ProjuiceUser.class, userId);
+	}
+
+	// admin section
+
 	@GET
 	@RetrieveByQuery
 	@Auth(method = API_TOKEN, authority = SUPER_USER)
@@ -44,29 +73,6 @@ public class UserApiController {
 	@Auth(method = API_TOKEN, authority = SUPER_USER)
 	public FindById<ProjuiceUser> deleteUser(@Param Long userId) {
 		return new FindById<>(ProjuiceUser.class, userId);
-	}
-
-	@POST
-	@Create
-	public ProjuiceUser register(@RequestBody ProjuiceUser body) throws BadRequestException {
-		if (!body.isValid()) {
-			throw new BadRequestException();
-		}
-		return body;
-	}
-
-	@GET("/me")
-	@SessionPerRequest
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public ProjuiceUser getMyInfos(@User ProjuiceUser me) {
-		return me;
-	}
-
-	@GET("/:userId/")
-	@RetrieveById
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public FindById<ProjuiceUser> getUserInfos(@Param Long userId) {
-		return new FindById<ProjuiceUser>(ProjuiceUser.class, userId);
 	}
 
 }
