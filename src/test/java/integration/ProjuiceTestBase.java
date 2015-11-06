@@ -11,6 +11,7 @@ import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 
@@ -65,6 +66,24 @@ public class ProjuiceTestBase {
 			req.putHeader(HttpHeaders.AUTHORIZATION, "token " + accessToken);
 		}
 		req.end();
+	}
+
+	protected void login(String username, String password, Handler<HttpClientResponse> handler) {
+		JsonObject credentials = new JsonObject();
+		credentials.put("username", username);
+		credentials.put("password", password);
+		postJSON(null, "/api/1/login", credentials, handler);
+	}
+
+	protected void assertLoginSuccess(String username, String password, TestContext context, Async async) {
+		login(username, password, response -> {
+			context.assertEquals(200, response.statusCode());
+			response.bodyHandler(buff -> {
+				JsonObject loginInfos = new JsonObject(buff.toString("UTF-8"));
+				context.assertNotNull(loginInfos.getString("access_token"));
+				async.complete();
+			});
+		});
 	}
 
 	protected HttpClient client() {

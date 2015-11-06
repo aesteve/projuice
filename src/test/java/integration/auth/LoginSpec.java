@@ -13,10 +13,7 @@ public class LoginSpec extends ProjuiceTestBase {
 	public void testLogin(TestContext context) {
 		String username = "Arnaud";
 		Async async = context.async();
-		JsonObject loginData = new JsonObject();
-		loginData.put("username", username);
-		loginData.put("password", "secret");
-		postJSON(null, "/api/1/login", loginData, response -> {
+		login(username, "secret", response -> {
 			context.assertEquals(200, response.statusCode());
 			response.bodyHandler(buff -> {
 				JsonObject loginInfo = new JsonObject(buff.toString("UTF-8"));
@@ -38,10 +35,7 @@ public class LoginSpec extends ProjuiceTestBase {
 	public void testLogout(TestContext context) {
 		String username = "Arnaud";
 		Async async = context.async();
-		JsonObject loginData = new JsonObject();
-		loginData.put("username", username);
-		loginData.put("password", "secret");
-		postJSON(null, "/api/1/login", loginData, response -> {
+		login(username, "secret", response -> {
 			context.assertEquals(200, response.statusCode());
 			response.bodyHandler(buff -> {
 				JsonObject loginInfo = new JsonObject(buff.toString("UTF-8"));

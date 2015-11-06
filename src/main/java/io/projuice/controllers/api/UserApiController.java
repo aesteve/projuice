@@ -8,6 +8,7 @@ import io.projuice.model.ProjuiceUser;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
+import com.github.aesteve.nubes.hibernate.annotations.Create;
 import com.github.aesteve.nubes.hibernate.annotations.RetrieveById;
 import com.github.aesteve.nubes.hibernate.annotations.RetrieveByQuery;
 import com.github.aesteve.nubes.hibernate.annotations.SessionPerRequest;
@@ -17,8 +18,11 @@ import com.github.aesteve.vertx.nubes.annotations.auth.Auth;
 import com.github.aesteve.vertx.nubes.annotations.auth.User;
 import com.github.aesteve.vertx.nubes.annotations.mixins.ContentType;
 import com.github.aesteve.vertx.nubes.annotations.params.Param;
+import com.github.aesteve.vertx.nubes.annotations.params.RequestBody;
 import com.github.aesteve.vertx.nubes.annotations.routing.http.GET;
+import com.github.aesteve.vertx.nubes.annotations.routing.http.POST;
 import com.github.aesteve.vertx.nubes.context.PaginationContext;
+import com.github.aesteve.vertx.nubes.exceptions.http.impl.BadRequestException;
 
 @Controller("/api/1/users")
 @ContentType("application/json")
@@ -45,5 +49,14 @@ public class UserApiController {
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	public FindById<ProjuiceUser> getUserInfos(@Param Long userId) {
 		return new FindById<ProjuiceUser>(ProjuiceUser.class, userId);
+	}
+
+	@POST
+	@Create
+	public ProjuiceUser register(@RequestBody ProjuiceUser body) throws BadRequestException {
+		if (!body.isValid()) {
+			throw new BadRequestException();
+		}
+		return body;
 	}
 }

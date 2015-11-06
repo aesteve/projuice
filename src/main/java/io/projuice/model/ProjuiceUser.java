@@ -98,6 +98,10 @@ public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 		this.password = password;
 	}
 
+	public boolean isValid() {
+		return username != null && emailAddress != null && password != null;
+	}
+
 	@Override
 	public int compareTo(ProjuiceUser other) {
 		if (other == null) {
