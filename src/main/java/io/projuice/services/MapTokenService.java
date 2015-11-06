@@ -27,7 +27,7 @@ import com.google.common.hash.Hashing;
  */
 public class MapTokenService implements TokenService {
 
-	private Map<AccessToken, ProjuiceUser> userForToken;
+	private Map<String, ProjuiceUser> userForToken;
 	private Map<ProjuiceUser, List<AccessToken>> tokensPerUser;
 
 	@Override
@@ -72,7 +72,7 @@ public class MapTokenService implements TokenService {
 		}
 		AccessToken accessToken = new AccessToken(token);
 		tokens.add(accessToken);
-		userForToken.put(accessToken, user);
+		userForToken.put(accessToken.token, user);
 		handler.handle(Future.succeededFuture(accessToken.token));
 	}
 
