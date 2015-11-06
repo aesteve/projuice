@@ -18,7 +18,7 @@ public class AccessToken {
 	}
 
 	public boolean hasExpired() {
-		return expirationDate.after(new Date());
+		return !expirationDate.after(new Date());
 	}
 
 	@Override
