@@ -32,7 +32,7 @@ public class MapTokenServiceSpec {
 	}
 
 	@After
-	public void tearDow(TestContext context) {
+	public void tearDown(TestContext context) {
 		Future<Void> fut = Future.future();
 		fut.setHandler(context.asyncAssertSuccess());
 		tokenService.stop(fut);
@@ -52,6 +52,35 @@ public class MapTokenServiceSpec {
 					context.assertFalse(res3.failed());
 					context.assertEquals(someone, res3.result());
 					async.complete();
+				});
+			});
+		});
+	}
+
+	@Test
+	public void clearTokens(TestContext context) {
+		Async async = context.async();
+		tokenService.createTokenFor(someone, res -> {
+			context.assertFalse(res.failed());
+			String token1 = res.result();
+			context.assertNotNull(token1);
+			tokenService.createTokenFor(someone, res2 -> {
+				String token2 = res.result();
+				context.assertNotNull(token2);
+				context.assertFalse(res2.failed());
+				tokenService.clearFor(someone);
+				tokenService.getTokenFor(someone, res3 -> {
+					context.assertTrue(res3.failed());
+					context.assertNull(res3.result());
+					tokenService.getUserAssociatedWith(token1, res4 -> {
+						context.assertTrue(res4.failed());
+						context.assertNull(res4.result());
+						tokenService.getUserAssociatedWith(token1, res5 -> {
+							context.assertTrue(res5.failed());
+							context.assertNull(res5.result());
+							async.complete();
+						});
+					});
 				});
 			});
 		});

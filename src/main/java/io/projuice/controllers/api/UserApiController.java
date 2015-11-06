@@ -18,6 +18,7 @@ import com.github.aesteve.nubes.hibernate.annotations.RetrieveByQuery;
 import com.github.aesteve.nubes.hibernate.annotations.SessionPerRequest;
 import com.github.aesteve.vertx.nubes.annotations.Controller;
 import com.github.aesteve.vertx.nubes.annotations.auth.Auth;
+import com.github.aesteve.vertx.nubes.annotations.auth.User;
 import com.github.aesteve.vertx.nubes.annotations.mixins.ContentType;
 import com.github.aesteve.vertx.nubes.annotations.params.RequestBody;
 import com.github.aesteve.vertx.nubes.annotations.routing.http.GET;
@@ -48,14 +49,13 @@ public class UserApiController {
 	@GET("/me")
 	@SessionPerRequest
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public ProjuiceUser getMyInfos(ProjuiceUser me) {
+	public ProjuiceUser getMyInfos(@User ProjuiceUser me) {
 		return me;
 	}
 
 	@POST("/login")
 	public void login(RoutingContext context, @RequestBody JsonObject credentials, Payload<JsonObject> loginInfo) {
 		authProvider.authenticateByUsername(credentials, res -> {
-			System.out.println("authentication failed ? " + res.failed());
 			if (res.failed()) {
 				Throwable cause = res.cause();
 				if (cause instanceof AuthenticationException) {
@@ -66,14 +66,12 @@ public class UserApiController {
 				return;
 			}
 			ProjuiceUser user = res.result();
-			System.out.println("user ? " + user);
 			if (user == null) {
 				context.fail(401);
 				return;
 			}
 			context.setUser(user);
 			tokenService.getTokenFor(user, tokenRes -> {
-				System.out.println("getTokenFor failed ? " + tokenRes.failed());
 				if (tokenRes.failed()) {
 					context.fail(tokenRes.cause());
 					return;
@@ -85,5 +83,12 @@ public class UserApiController {
 				context.next();
 			});
 		});
+	}
+
+	@POST("/logout")
+	@SessionPerRequest
+	@Auth(method = API_TOKEN, authority = LOGGED_IN)
+	public void logout(@User ProjuiceUser current) {
+		authProvider.clearFor(current);
 	}
 }

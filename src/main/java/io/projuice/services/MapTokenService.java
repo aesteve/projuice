@@ -78,7 +78,12 @@ public class MapTokenService implements TokenService {
 
 	@Override
 	public void getUserAssociatedWith(String token, Handler<AsyncResult<User>> handler) {
-		handler.handle(Future.succeededFuture(userForToken.get(token)));
+		User u = userForToken.get(token);
+		if (u == null) {
+			handler.handle(Future.failedFuture("No user found"));
+			return;
+		}
+		handler.handle(Future.succeededFuture(u));
 	}
 
 	@Override
@@ -87,8 +92,9 @@ public class MapTokenService implements TokenService {
 		if (tokens == null || tokens.isEmpty()) {
 			return;
 		}
-		tokens.forEach(userForToken::remove);
+		tokens.stream().map(token -> token.token).forEach(userForToken::remove);
 		tokensPerUser.remove(user);
+		System.out.println("after : " + userForToken.size());
 	}
 
 	private static String generateTokenFor(ProjuiceUser user) {

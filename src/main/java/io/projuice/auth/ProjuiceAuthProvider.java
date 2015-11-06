@@ -78,37 +78,27 @@ public class ProjuiceAuthProvider implements AuthProvider, Service {
 		}
 		hibernate.withEntityManager((em, future) -> {
 			hibernate.findBy(em, new FindBy<>(ProjuiceUser.class, "username", username), userResult -> {
-				System.out.println("FindUserByUsername : " + username);
-				System.out.println(userResult.failed());
 				if (userResult.failed()) {
 					future.fail(userResult.cause());
 					return;
 				}
 				ProjuiceUser user = userResult.result();
-				System.out.println(user);
 				if (user == null) {
 					future.fail(new AuthenticationException());
 					return;
 				}
-				System.out.println(user.getPassword());
-				System.out.println(pwd.equals(user.getPassword()));
 				if (!pwd.equals(user.getPassword())) {
 					future.fail(new AuthenticationException());
 					return;
 				}
 				tokenService.createTokenFor(user, token -> {
-					System.out.println("create token for : ");
-					System.out.println(user);
 					future.complete(user);
 				});
 			});
 		}, res -> {
 			if (res.failed()) {
-				System.out.println("with entitiy manager faield");
 				resultHandler.handle(Future.failedFuture(res.cause()));
 			} else {
-				System.out.println("with entitiy manager result");
-				System.out.println(res.result());
 				resultHandler.handle(Future.succeededFuture((ProjuiceUser) res.result()));
 			}
 		});
