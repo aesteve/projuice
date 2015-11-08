@@ -1,8 +1,8 @@
 package io.projuice.fixtures;
 
-import com.github.aesteve.nubes.hibernate.HibernateNubes;
-import com.github.aesteve.nubes.hibernate.queries.FindBy;
-import com.github.aesteve.nubes.hibernate.services.HibernateService;
+import com.github.aesteve.nubes.orm.mongo.MongoNubes;
+import com.github.aesteve.nubes.orm.mongo.services.MongoService;
+import com.github.aesteve.nubes.orm.queries.FindBy;
 import com.github.aesteve.vertx.nubes.annotations.services.Service;
 import com.github.aesteve.vertx.nubes.fixtures.Fixture;
 import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
@@ -16,8 +16,8 @@ import io.vertx.core.Vertx;
 
 public class IssuesFixture extends Fixture {
 
-	@Service(HibernateNubes.HIBERNATE_SERVICE_NAME)
-	HibernateService hibernate;
+	@Service(MongoNubes.MONGO_SERVICE_NAME)
+	MongoService mongo;
 
 	@Override
 	public int executionOrder() {
@@ -26,27 +26,31 @@ public class IssuesFixture extends Fixture {
 
 	@Override
 	public void startUp(Vertx vertx, Future<Void> future) {
-		hibernate.withinTransactionDo((em, fut) -> {
-			hibernate.findBy(em, new FindBy<ProjuiceUser>(ProjuiceUser.class, "username", "Arnaud"), res -> {
-				ProjuiceUser arnaud = res.result();
-				hibernate.findBy(em, new FindBy<Project>(Project.class, "name", "Projuice"), res2 -> {
-					Project projuice = res2.result();
-					Issue issue = new Issue();
-					issue.setProject(projuice);
-					issue.setName("Design model");
-					issue.setType(IssueType.ENHANCEMENT);
-					issue.setDescription("## Design the whole projuice working model");
-					issue.assign(arnaud);
-					em.persist(issue);
-					fut.complete();
-				});
+		System.out.println("FIND USER");
+		mongo.findBy(new FindBy<ProjuiceUser>(ProjuiceUser.class, "username", "Arnaud"), res -> {
+			ProjuiceUser arnaud = res.result();
+			System.out.println("FIND PROJECT");
+			mongo.findBy(new FindBy<Project>(Project.class, "id", ProjectsFixture.ProjuiceID), res2 -> {
+				Project projuice = res2.result();
+				if (projuice == null) {
+					future.fail("Project not found");
+					return;
+				}
+				Issue issue = new Issue();
+				issue.setProjectId(projuice.getId());
+				issue.setName("Design model");
+				issue.setType(IssueType.ENHANCEMENT);
+				issue.setDescription("## Design the whole projuice working model");
+				issue.assign(arnaud);
+				future.complete();
 			});
-		}, AsyncUtils.ignoreResult(future));
+		});
 	}
 
 	@Override
 	public void tearDown(Vertx vertx, Future<Void> future) {
-		future.complete();
+		System.out.println("clear");
+		mongo.deleteAll(new FindBy<>(Issue.class), AsyncUtils.ignoreResult(future));
 	}
 
 }

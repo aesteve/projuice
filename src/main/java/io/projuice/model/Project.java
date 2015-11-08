@@ -1,30 +1,22 @@
 package io.projuice.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
-@Entity
 public class Project {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	
+	private String id;
 	private String name;
 	private String description;
 	private String githubUrl;
 
-	@OneToMany(mappedBy = "user")
 	private Set<UserRoleInProject> participants;
-
-	@OneToMany(mappedBy = "project")
 	private Set<Label> labels;
-
-	@OneToMany(mappedBy = "project")
-	private Set<Issue> issues;
+	
+	public Project() {
+		participants = new HashSet<>();
+		labels = new HashSet<>();
+	}
 
 	public String getGithubUrl() {
 		return githubUrl;
@@ -34,11 +26,11 @@ public class Project {
 		this.githubUrl = githubUrl;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -72,13 +64,5 @@ public class Project {
 
 	public void setLabels(Set<Label> labels) {
 		this.labels = labels;
-	}
-
-	public Set<Issue> getIssues() {
-		return issues;
-	}
-
-	public void setIssues(Set<Issue> issues) {
-		this.issues = issues;
 	}
 }

@@ -22,24 +22,36 @@ import org.junit.runner.RunWith;
 @RunWith(VertxUnitRunner.class)
 public abstract class ProjuiceTestBase {
 
+	public static final int MONGO_PORT = 27017;
+	public static final String DB = "projuice-test";
+	
 	protected Vertx vertx;
+	protected String deploymentId;
 
 	@Before
 	public void setUp(TestContext context) {
+		Async async = context.async();
 		vertx = Vertx.vertx();
-		vertx.deployVerticle(Server.class.getName(), testOptions(), context.asyncAssertSuccess());
+		vertx.deployVerticle(Server.class.getName(), testOptions(), res -> {
+			deploymentId = res.result();
+			async.complete();
+		});
 	}
 
 	@After
 	public void tearDown(TestContext context) {
-		vertx.close(context.asyncAssertSuccess());
+		Async async = context.async();
+		vertx.undeploy(deploymentId, res -> {
+			System.out.println("Close Vert.x");
+			vertx.close(closeRes -> async.complete());
+		});
 	}
 
 	private static DeploymentOptions testOptions() {
 		JsonObject conf = new JsonObject();
 		conf.put("src-package", "io.projuice");
 		conf.put("templates", new JsonArray().add("hbs"));
-		conf.put("persistence-unit", "projuice-dev");
+		conf.put("mongo", new JsonObject().put("host", "localhost").put("port", MONGO_PORT).put("db_name", DB));
 		DeploymentOptions testOptions = new DeploymentOptions();
 		testOptions.setInstances(1);
 		testOptions.setConfig(conf);

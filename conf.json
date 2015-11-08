@@ -1,5 +1,9 @@
 {
 	"src-package": "io.projuice",
 	"templates": ["hbs"],
-	"persistence-unit": "projuice-dev"
+	"mongo": {
+			"host": "localhost",
+			"port": 8889,
+			"db": "projuice-test"
+	}
 }

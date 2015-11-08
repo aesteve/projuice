@@ -1,5 +1,9 @@
 package io.projuice.auth;
 
+import com.github.aesteve.nubes.orm.mongo.services.MongoService;
+import com.github.aesteve.nubes.orm.queries.FindBy;
+import com.github.aesteve.vertx.nubes.services.Service;
+
 import io.projuice.model.ProjuiceUser;
 import io.projuice.services.TokenService;
 import io.vertx.core.AsyncResult;
@@ -12,10 +16,6 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
 
-import com.github.aesteve.nubes.hibernate.queries.FindBy;
-import com.github.aesteve.nubes.hibernate.services.HibernateService;
-import com.github.aesteve.vertx.nubes.services.Service;
-
 public class ProjuiceAuthProvider implements AuthProvider, Service {
 
 	public final static String SUPER_USER = "SUPER_USER";
@@ -23,11 +23,11 @@ public class ProjuiceAuthProvider implements AuthProvider, Service {
 
 	protected final static Logger log = LoggerFactory.getLogger(ProjuiceAuthProvider.class);
 
-	private final HibernateService hibernate;
+	private final MongoService mongo;
 	private final TokenService tokenService;
 
-	public ProjuiceAuthProvider(HibernateService hibernate, TokenService tokenService) {
-		this.hibernate = hibernate;
+	public ProjuiceAuthProvider(MongoService mongo, TokenService tokenService) {
+		this.mongo = mongo;
 		this.tokenService = tokenService;
 	}
 
@@ -76,31 +76,23 @@ public class ProjuiceAuthProvider implements AuthProvider, Service {
 			resultHandler.handle(Future.failedFuture(new AuthenticationException()));
 			return;
 		}
-		hibernate.withEntityManager((em, future) -> {
-			hibernate.findBy(em, new FindBy<>(ProjuiceUser.class, "username", username), userResult -> {
-				if (userResult.failed()) {
-					future.fail(userResult.cause());
-					return;
-				}
-				ProjuiceUser user = userResult.result();
-				if (user == null) {
-					future.fail(new AuthenticationException());
-					return;
-				}
-				if (!pwd.equals(user.getPassword())) {
-					future.fail(new AuthenticationException());
-					return;
-				}
-				tokenService.createTokenFor(user, token -> {
-					future.complete(user);
-				});
-			});
-		}, res -> {
-			if (res.failed()) {
-				resultHandler.handle(Future.failedFuture(res.cause()));
-			} else {
-				resultHandler.handle(Future.succeededFuture((ProjuiceUser) res.result()));
+		mongo.findBy(new FindBy<>(ProjuiceUser.class, "username", username), userResult -> {
+			if (userResult.failed()) {
+				resultHandler.handle(Future.failedFuture(userResult.cause()));
+				return;
 			}
+			ProjuiceUser user = userResult.result();
+			if (user == null) {
+				resultHandler.handle(Future.failedFuture(new AuthenticationException()));
+				return;
+			}
+			if (!pwd.equals(user.getPassword())) {
+				resultHandler.handle(Future.failedFuture(new AuthenticationException()));
+				return;
+			}
+			tokenService.createTokenFor(user, token -> {
+				resultHandler.handle(Future.succeededFuture(user));
+			});
 		});
 	}
 

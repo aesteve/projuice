@@ -59,9 +59,6 @@ public class UserSpec extends ProjuiceTestBase {
 		postJSON(null, "/api/1/users", newUser, response -> {
 			context.assertEquals(200, response.statusCode());
 			response.bodyHandler(buff -> {
-				JsonObject json = new JsonObject(buff.toString("UTF-8"));
-				Long id = json.getLong("id");
-				context.assertNotNull(id);
 				assertLoginSuccess(username, password, context, async);
 			});
 		});

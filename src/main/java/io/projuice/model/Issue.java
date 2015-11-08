@@ -1,39 +1,22 @@
 package io.projuice.model;
 
-import io.projuice.model.issue.IssueStatus;
-import io.projuice.model.issue.IssueType;
-
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import io.projuice.model.issue.IssueStatus;
+import io.projuice.model.issue.IssueType;
 
-import org.boon.json.annotations.JsonIgnore;
-
-@Entity
 public class Issue {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private String id;
 	private IssueType type;
 	private IssueStatus status;
 	private String name;
 	private String description;
 
-	@ManyToOne
-	@JsonIgnore
-	private Project project;
+	private String projectId;
 
-	@ManyToMany
 	private Set<ProjuiceUser> assignees;
-
-	@ManyToMany
 	private Set<Label> labels;
 
 	public Issue() {
@@ -41,20 +24,20 @@ public class Issue {
 		assignees = new TreeSet<ProjuiceUser>();
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public Project getProject() {
-		return project;
+	public String getProjectId() {
+		return projectId;
 	}
 
-	public void setProject(Project project) {
-		this.project = project;
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
 	}
 
 	public IssueType getType() {

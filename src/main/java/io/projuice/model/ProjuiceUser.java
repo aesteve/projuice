@@ -1,5 +1,7 @@
 package io.projuice.model;
 
+import org.boon.json.annotations.JsonIgnore;
+
 import io.projuice.auth.ProjuiceAuthProvider;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -7,46 +9,22 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
 
-import java.util.Set;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-
-import org.boon.json.annotations.JsonIgnore;
-
-@Entity
 public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private String id;
 	private String username;
 	private String emailAddress;
 	private String githubId;
 	private String password;
 
-	@ManyToMany(mappedBy = "assignees")
-	@JsonIgnore
-	private Set<Issue> issues;
-
-	@OneToMany(mappedBy = "project")
-	@JsonIgnore
-	private Set<UserRoleInProject> projects;
-
-	@Transient
 	@JsonIgnore
 	private ProjuiceAuthProvider provider;
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -72,22 +50,6 @@ public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 
 	public void setGithubId(String githubId) {
 		this.githubId = githubId;
-	}
-
-	public Set<UserRoleInProject> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(Set<UserRoleInProject> projects) {
-		this.projects = projects;
-	}
-
-	public Set<Issue> getIssues() {
-		return issues;
-	}
-
-	public void setIssues(Set<Issue> issues) {
-		this.issues = issues;
 	}
 
 	public String getPassword() {
