@@ -19,7 +19,6 @@ public class EmbeddedMongoVerticle extends AbstractVerticle {
 
 	@Override
 	public void start(Future<Void> future) {
-		System.out.println("Start embedded mongo");
 		MongodStarter starter = MongodStarter.getDefaultInstance();
 		try {
 			int port = ProjuiceTestBase.MONGO_PORT;
@@ -28,7 +27,6 @@ public class EmbeddedMongoVerticle extends AbstractVerticle {
 			builder.net(new Net(port, Network.localhostIsIPv6()));
 			mongod = starter.prepare(builder.build());
 			mongod.start();
-			Thread.sleep(2000);
 		} catch (Exception ioe) {
 			future.fail(ioe);
 			return;

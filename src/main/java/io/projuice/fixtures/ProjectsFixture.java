@@ -32,7 +32,7 @@ public class ProjectsFixture extends Fixture {
 		projuice.setName("Projuice");
 		projuice.setDescription("The simple project manager");
 		projuice.setGithubUrl("http://github.com/aesteve/projuice");
-		projuice.setId(ProjuiceID);
+		projuice.generateId();
 		mongo.findBy(new FindBy<>(ProjuiceUser.class, "username", "Arnaud"), res -> {
 			ProjuiceUser arnaud = res.result();
 			UserRoleInProject role = new UserRoleInProject();

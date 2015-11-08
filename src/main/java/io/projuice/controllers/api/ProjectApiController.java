@@ -23,16 +23,21 @@ import com.github.aesteve.vertx.nubes.annotations.routing.http.POST;
 import com.github.aesteve.vertx.nubes.annotations.routing.http.PUT;
 import com.github.aesteve.vertx.nubes.annotations.services.Service;
 import com.github.aesteve.vertx.nubes.context.PaginationContext;
+import com.github.aesteve.vertx.nubes.exceptions.ValidationException;
+import com.github.aesteve.vertx.nubes.exceptions.http.impl.BadRequestException;
+import com.github.aesteve.vertx.nubes.marshallers.Payload;
+import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
 
 import io.projuice.model.Project;
 import io.projuice.model.ProjuiceUser;
+import io.vertx.ext.web.RoutingContext;
 
 @Controller("/api/1/projects")
 @ContentType("application/json")
 public class ProjectApiController {
 
 	@Service(MongoNubes.MONGO_SERVICE_NAME)
-	private MongoService hibernate;
+	private MongoService mongo;
 
 	@GET
 	@RetrieveByQuery
@@ -42,8 +47,25 @@ public class ProjectApiController {
 
 	@POST
 	@Create
-	public Project createProject(@RequestBody Project project) {
-		return project;
+	@Auth(method = API_TOKEN, authority = LOGGED_IN)
+	public void createProject(RoutingContext context, @RequestBody Project project, Payload<Project> payload) throws BadRequestException {
+		try {
+			project.validate();
+		} catch(ValidationException ve) {
+			throw new BadRequestException(ve);
+		}
+		project.generateId();
+		FindBy<Project> findById = new FindBy<>(Project.class, "id", project.getId());
+		mongo.findBy(findById, AsyncUtils.failOr(context, res -> {
+			Project proj = res.result();
+			if (proj != null) {
+				ValidationException ve = new ValidationException("A project with the same name already exists");
+				context.fail(new BadRequestException(ve));
+				return;
+			}
+			payload.set(project);
+			context.next();
+		}));
 	}
 
 	@GET("/:projectId/")

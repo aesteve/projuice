@@ -42,7 +42,6 @@ public abstract class ProjuiceTestBase {
 	public void tearDown(TestContext context) {
 		Async async = context.async();
 		vertx.undeploy(deploymentId, res -> {
-			System.out.println("Close Vert.x");
 			vertx.close(closeRes -> async.complete());
 		});
 	}

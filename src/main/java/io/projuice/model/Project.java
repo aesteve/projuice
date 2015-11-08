@@ -3,6 +3,8 @@ package io.projuice.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.github.aesteve.vertx.nubes.exceptions.ValidationException;
+
 public class Project {
 	
 	private String id;
@@ -16,6 +18,16 @@ public class Project {
 	public Project() {
 		participants = new HashSet<>();
 		labels = new HashSet<>();
+	}
+	
+	public void generateId() {
+		setId(name.replaceAll("\\s+","-").toLowerCase());
+	}
+	
+	public void validate() throws ValidationException {
+		if (name == null) {
+			throw new ValidationException("Project name is mandatory");
+		}
 	}
 
 	public String getGithubUrl() {
