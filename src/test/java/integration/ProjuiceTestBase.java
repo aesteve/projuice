@@ -107,6 +107,16 @@ public abstract class ProjuiceTestBase {
 		});
 	}
 
+	protected void withStandardTokenDo(TestContext context, Handler<String> theTest) {
+		login("BrandNew", "secret", response -> {
+			context.assertEquals(200, response.statusCode());
+			response.bodyHandler(buff -> {
+				JsonObject cred = new JsonObject(buff.toString("UTF-8"));
+				theTest.handle(cred.getString("access_token"));
+			});
+		});
+	}
+
 	protected HttpClient client() {
 		HttpClientOptions options = new HttpClientOptions();
 		options.setDefaultHost("localhost");

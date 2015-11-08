@@ -9,8 +9,6 @@ import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
 
 import io.projuice.model.Project;
 import io.projuice.model.ProjuiceUser;
-import io.projuice.model.Role;
-import io.projuice.model.UserRoleInProject;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 
@@ -35,11 +33,7 @@ public class ProjectsFixture extends Fixture {
 		projuice.generateId();
 		mongo.findBy(new FindBy<>(ProjuiceUser.class, "username", "Arnaud"), res -> {
 			ProjuiceUser arnaud = res.result();
-			UserRoleInProject role = new UserRoleInProject();
-			role.setUser(arnaud);
-			role.setRole(Role.ADMIN);
-			projuice.getParticipants().add(role);
-			System.out.println("create project");
+			projuice.addAdmin(arnaud);
 			mongo.create(projuice, AsyncUtils.ignoreResult(future));
 		});
 	}

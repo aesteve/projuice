@@ -3,9 +3,11 @@ package io.projuice.controllers.api;
 import static com.github.aesteve.vertx.nubes.auth.AuthMethod.API_TOKEN;
 import static io.projuice.auth.ProjuiceAuthProvider.LOGGED_IN;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.github.aesteve.nubes.orm.annotations.Create;
 import com.github.aesteve.nubes.orm.annotations.RetrieveById;
-import com.github.aesteve.nubes.orm.annotations.RetrieveByQuery;
 import com.github.aesteve.nubes.orm.annotations.Update;
 import com.github.aesteve.nubes.orm.mongo.MongoNubes;
 import com.github.aesteve.nubes.orm.mongo.services.MongoService;
@@ -40,15 +42,21 @@ public class ProjectApiController {
 	private MongoService mongo;
 
 	@GET
-	@RetrieveByQuery
-	public FindBy<Project> list(PaginationContext pageContext) {
-		return new FindBy<>(Project.class);
+	@Auth(method = API_TOKEN, authority = LOGGED_IN)
+	public void list(RoutingContext context, PaginationContext pageContext, @User ProjuiceUser loggedUser, Payload<List<Project>> payload) {
+		mongo.listAndCount(new FindBy<>(Project.class), 0, Integer.MAX_VALUE, AsyncUtils.failOr(context, res -> {
+			List<Project> projects = res.result().list;
+			payload.set(projects.stream()
+					.filter(loggedUser::isMemberOf)
+					.collect(Collectors.toList()));
+			context.next();
+		}));
 	}
 
 	@POST
 	@Create
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public void createProject(RoutingContext context, @RequestBody Project project, Payload<Project> payload) throws BadRequestException {
+	public void createProject(RoutingContext context, @RequestBody Project project, Payload<Project> payload, @User ProjuiceUser loggedUser) throws BadRequestException {
 		try {
 			project.validate();
 		} catch(ValidationException ve) {
@@ -63,6 +71,7 @@ public class ProjectApiController {
 				context.fail(new BadRequestException(ve));
 				return;
 			}
+			project.addAdmin(loggedUser);
 			payload.set(project);
 			context.next();
 		}));

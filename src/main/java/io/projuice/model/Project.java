@@ -77,4 +77,8 @@ public class Project {
 	public void setLabels(Set<Label> labels) {
 		this.labels = labels;
 	}
+	
+	public void addAdmin(ProjuiceUser user) {
+		participants.add(new UserRoleInProject(user.getUsername(), Role.ADMIN));
+	}
 }

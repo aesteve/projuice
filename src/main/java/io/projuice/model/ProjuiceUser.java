@@ -11,7 +11,6 @@ import io.vertx.ext.auth.User;
 
 public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 
-	private String id;
 	private String username;
 	private String emailAddress;
 	private String githubId;
@@ -19,14 +18,6 @@ public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 
 	@JsonIgnore
 	private ProjuiceAuthProvider provider;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	public String getUsername() {
 		return username;
@@ -62,6 +53,14 @@ public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 
 	public boolean isValid() {
 		return username != null && emailAddress != null && password != null;
+	}
+	
+	public boolean isMemberOf(Project project) {
+		return project.getParticipants().stream().anyMatch(this::belongsToRole);
+	}
+	
+	public boolean belongsToRole(UserRoleInProject role) {
+		return role.getUser().equals(username);
 	}
 
 	@Override

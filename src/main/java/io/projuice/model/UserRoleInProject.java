@@ -2,15 +2,24 @@ package io.projuice.model;
 
 public class UserRoleInProject {
 	
-	private ProjuiceUser user;
+	private String username;
 	private Role role;
 
-	public ProjuiceUser getUser() {
-		return user;
+	public UserRoleInProject() {
+		
 	}
 
-	public void setUser(ProjuiceUser user) {
-		this.user = user;
+	public UserRoleInProject(String username, Role role) {
+		this.username = username;
+		this.role = role;
+	}
+	
+	public String getUser() {
+		return username;
+	}
+
+	public void setUser(String username) {
+		this.username = username;
 	}
 
 	public Role getRole() {
