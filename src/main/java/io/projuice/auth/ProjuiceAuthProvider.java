@@ -61,7 +61,6 @@ public class ProjuiceAuthProvider implements AuthProvider, Service {
 	 * FIXME / TODO : describe business rules (who can see ?)
 	 */
 	public void isAuthorised(User user, String authority, Handler<AsyncResult<Boolean>> resultHandler) {
-		log.info("is Authorised called " + authority);
 		resultHandler.handle(Future.succeededFuture(Boolean.TRUE));
 	}
 
