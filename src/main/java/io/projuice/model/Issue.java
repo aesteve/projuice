@@ -1,10 +1,10 @@
 package io.projuice.model;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 import io.projuice.model.issue.IssueStatus;
 import io.projuice.model.issue.IssueType;
+
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Issue {
 

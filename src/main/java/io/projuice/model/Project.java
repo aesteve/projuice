@@ -6,7 +6,7 @@ import java.util.Set;
 import com.github.aesteve.vertx.nubes.exceptions.ValidationException;
 
 public class Project {
-	
+
 	private String id;
 	private String name;
 	private String description;
@@ -14,16 +14,16 @@ public class Project {
 
 	private Set<UserRoleInProject> participants;
 	private Set<Label> labels;
-	
+
 	public Project() {
 		participants = new HashSet<>();
 		labels = new HashSet<>();
 	}
-	
+
 	public void generateId() {
-		setId(name.replaceAll("\\s+","-").toLowerCase());
+		setId(name.replaceAll("\\s+", "-").toLowerCase());
 	}
-	
+
 	public void validate() throws ValidationException {
 		if (name == null) {
 			throw new ValidationException("Project name is mandatory");
@@ -77,7 +77,7 @@ public class Project {
 	public void setLabels(Set<Label> labels) {
 		this.labels = labels;
 	}
-	
+
 	public void addAdmin(ProjuiceUser user) {
 		participants.add(new UserRoleInProject(user.getUsername(), Role.ADMIN));
 	}

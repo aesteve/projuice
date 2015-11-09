@@ -1,13 +1,13 @@
 package io.projuice;
 
-import com.github.aesteve.nubes.orm.mongo.MongoNubes;
-import com.github.aesteve.nubes.orm.mongo.MongoNubesServer;
-import com.github.aesteve.nubes.orm.mongo.services.MongoService;
-
 import io.projuice.auth.ProjuiceAuthProvider;
 import io.projuice.services.TokenService;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
+
+import com.github.aesteve.nubes.orm.mongo.MongoNubes;
+import com.github.aesteve.nubes.orm.mongo.MongoNubesServer;
+import com.github.aesteve.nubes.orm.mongo.services.MongoService;
 
 public class Server extends MongoNubesServer {
 

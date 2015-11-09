@@ -3,6 +3,7 @@ package io.projuice.controllers.api;
 import static com.github.aesteve.vertx.nubes.auth.AuthMethod.API_TOKEN;
 import static io.projuice.auth.ProjuiceAuthProvider.LOGGED_IN;
 import static io.projuice.auth.ProjuiceAuthProvider.SUPER_USER;
+import io.projuice.model.ProjuiceUser;
 
 import com.github.aesteve.nubes.orm.annotations.Create;
 import com.github.aesteve.nubes.orm.annotations.RemoveById;
@@ -22,8 +23,6 @@ import com.github.aesteve.vertx.nubes.annotations.routing.http.GET;
 import com.github.aesteve.vertx.nubes.annotations.routing.http.POST;
 import com.github.aesteve.vertx.nubes.context.PaginationContext;
 import com.github.aesteve.vertx.nubes.exceptions.http.impl.BadRequestException;
-
-import io.projuice.model.ProjuiceUser;
 
 @Controller("/api/1/users")
 @ContentType("application/json")

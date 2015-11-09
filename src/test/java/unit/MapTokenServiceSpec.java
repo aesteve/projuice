@@ -1,10 +1,5 @@
 package unit;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import io.projuice.model.ProjuiceUser;
 import io.projuice.services.MapTokenService;
 import io.projuice.services.TokenService;
@@ -12,6 +7,11 @@ import io.vertx.core.Future;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 @RunWith(VertxUnitRunner.class)
 public class MapTokenServiceSpec {

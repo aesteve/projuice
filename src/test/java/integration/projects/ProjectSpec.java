@@ -1,13 +1,13 @@
 package integration.projects;
 
-import org.junit.Test;
-
 import integration.ProjuiceTestBase;
 import io.projuice.fixtures.ProjectsFixture;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
+
+import org.junit.Test;
 
 public class ProjectSpec extends ProjuiceTestBase {
 
@@ -36,7 +36,6 @@ public class ProjectSpec extends ProjuiceTestBase {
 			});
 		});
 	}
-	
 
 	@Test
 	public void getNoProjects(TestContext context) {
@@ -52,7 +51,7 @@ public class ProjectSpec extends ProjuiceTestBase {
 			});
 		});
 	}
-	
+
 	@Test
 	public void createProjectUnauth(TestContext context) {
 		Async async = context.async();
@@ -63,7 +62,7 @@ public class ProjectSpec extends ProjuiceTestBase {
 			async.complete();
 		});
 	}
-	
+
 	@Test
 	public void createProjectWithoutName(TestContext context) {
 		Async async = context.async();
@@ -75,7 +74,7 @@ public class ProjectSpec extends ProjuiceTestBase {
 			});
 		});
 	}
-	
+
 	@Test
 	public void createProjectWithExistingName(TestContext context) {
 		Async async = context.async();
@@ -88,7 +87,7 @@ public class ProjectSpec extends ProjuiceTestBase {
 			});
 		});
 	}
-	
+
 	@Test
 	public void createProjectSuccess(TestContext context) {
 		String name = "Projuice2";

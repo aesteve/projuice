@@ -1,18 +1,18 @@
 package io.projuice.fixtures;
 
-import com.github.aesteve.nubes.orm.mongo.MongoNubes;
-import com.github.aesteve.nubes.orm.mongo.services.MongoService;
-import com.github.aesteve.nubes.orm.queries.FindBy;
-import com.github.aesteve.vertx.nubes.annotations.services.Service;
-import com.github.aesteve.vertx.nubes.fixtures.Fixture;
-import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
-
 import io.projuice.model.Issue;
 import io.projuice.model.Project;
 import io.projuice.model.ProjuiceUser;
 import io.projuice.model.issue.IssueType;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+
+import com.github.aesteve.nubes.orm.mongo.MongoNubes;
+import com.github.aesteve.nubes.orm.mongo.services.MongoService;
+import com.github.aesteve.nubes.orm.queries.FindBy;
+import com.github.aesteve.vertx.nubes.annotations.services.Service;
+import com.github.aesteve.vertx.nubes.fixtures.Fixture;
+import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
 
 public class IssuesFixture extends Fixture {
 

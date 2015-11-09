@@ -1,13 +1,13 @@
 package io.projuice.model;
 
-import org.boon.json.annotations.JsonIgnore;
-
 import io.projuice.auth.ProjuiceAuthProvider;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
+
+import org.boon.json.annotations.JsonIgnore;
 
 public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 
@@ -54,11 +54,11 @@ public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 	public boolean isValid() {
 		return username != null && emailAddress != null && password != null;
 	}
-	
+
 	public boolean isMemberOf(Project project) {
 		return project.getParticipants().stream().anyMatch(this::belongsToRole);
 	}
-	
+
 	public boolean belongsToRole(UserRoleInProject role) {
 		return role.getUser().equals(username);
 	}

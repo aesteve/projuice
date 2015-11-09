@@ -1,5 +1,9 @@
 package io.projuice.verticles;
 
+import integration.ProjuiceTestBase;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
+
 import com.github.aesteve.vertx.nubes.annotations.services.Verticle;
 
 import de.flapdoodle.embed.mongo.MongodExecutable;
@@ -8,13 +12,10 @@ import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
-import integration.ProjuiceTestBase;
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
 
 @Verticle(inheritsConfig = true)
 public class EmbeddedMongoVerticle extends AbstractVerticle {
-	
+
 	private MongodExecutable mongod;
 
 	@Override

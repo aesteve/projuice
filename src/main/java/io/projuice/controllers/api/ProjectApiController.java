@@ -2,6 +2,9 @@ package io.projuice.controllers.api;
 
 import static com.github.aesteve.vertx.nubes.auth.AuthMethod.API_TOKEN;
 import static io.projuice.auth.ProjuiceAuthProvider.LOGGED_IN;
+import io.projuice.model.Project;
+import io.projuice.model.ProjuiceUser;
+import io.vertx.ext.web.RoutingContext;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,10 +33,6 @@ import com.github.aesteve.vertx.nubes.exceptions.http.impl.BadRequestException;
 import com.github.aesteve.vertx.nubes.marshallers.Payload;
 import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
 
-import io.projuice.model.Project;
-import io.projuice.model.ProjuiceUser;
-import io.vertx.ext.web.RoutingContext;
-
 @Controller("/api/1/projects")
 @ContentType("application/json")
 public class ProjectApiController {
@@ -59,7 +58,7 @@ public class ProjectApiController {
 	public void createProject(RoutingContext context, @RequestBody Project project, Payload<Project> payload, @User ProjuiceUser loggedUser) throws BadRequestException {
 		try {
 			project.validate();
-		} catch(ValidationException ve) {
+		} catch (ValidationException ve) {
 			throw new BadRequestException(ve);
 		}
 		project.generateId();

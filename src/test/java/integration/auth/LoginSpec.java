@@ -1,11 +1,11 @@
 package integration.auth;
 
-import org.junit.Test;
-
 import integration.ProjuiceTestBase;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
+
+import org.junit.Test;
 
 public class LoginSpec extends ProjuiceTestBase {
 

@@ -1,9 +1,5 @@
 package io.projuice.auth;
 
-import com.github.aesteve.nubes.orm.mongo.services.MongoService;
-import com.github.aesteve.nubes.orm.queries.FindBy;
-import com.github.aesteve.vertx.nubes.services.Service;
-
 import io.projuice.model.ProjuiceUser;
 import io.projuice.services.TokenService;
 import io.vertx.core.AsyncResult;
@@ -15,6 +11,10 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
+
+import com.github.aesteve.nubes.orm.mongo.services.MongoService;
+import com.github.aesteve.nubes.orm.queries.FindBy;
+import com.github.aesteve.vertx.nubes.services.Service;
 
 public class ProjuiceAuthProvider implements AuthProvider, Service {
 

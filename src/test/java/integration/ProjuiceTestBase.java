@@ -24,7 +24,7 @@ public abstract class ProjuiceTestBase {
 
 	public static final int MONGO_PORT = 27017;
 	public static final String DB = "projuice-test";
-	
+
 	protected Vertx vertx;
 	protected String deploymentId;
 
