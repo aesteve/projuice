@@ -2,9 +2,13 @@ package io.projuice.model;
 
 import io.projuice.model.issue.IssueStatus;
 import io.projuice.model.issue.IssueType;
+import io.projuice.utils.StringUtils;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
+
+import com.github.aesteve.vertx.nubes.exceptions.ValidationException;
 
 public class Issue {
 
@@ -22,6 +26,11 @@ public class Issue {
 	public Issue() {
 		labels = new TreeSet<Label>();
 		assignees = new TreeSet<ProjuiceUser>();
+		status = IssueStatus.WAITING;
+	}
+
+	public void generateId() {
+		id = StringUtils.smallHash(projectId + ":" + Long.valueOf(new Date().getTime()).toString());
 	}
 
 	public String getId() {
@@ -86,6 +95,22 @@ public class Issue {
 
 	public void setLabels(Set<Label> labels) {
 		this.labels = labels;
+	}
+
+	public void validate() throws ValidationException {
+		if (name == null) {
+			throw new ValidationException("Issue name is mandatory");
+		}
+		if (type == null) {
+			throw new ValidationException("Issue type is mandatory");
+		}
+		if (status == null) {
+			throw new ValidationException("Issue status is mandatory");
+		}
+	}
+
+	public void close() {
+		status = IssueStatus.CLOSED;
 	}
 
 	public void assign(ProjuiceUser user) {

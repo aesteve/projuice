@@ -9,7 +9,6 @@ import com.github.aesteve.nubes.orm.annotations.Create;
 import com.github.aesteve.nubes.orm.annotations.RemoveById;
 import com.github.aesteve.nubes.orm.annotations.RetrieveById;
 import com.github.aesteve.nubes.orm.annotations.RetrieveByQuery;
-import com.github.aesteve.nubes.orm.annotations.SessionPerRequest;
 import com.github.aesteve.nubes.orm.queries.FindBy;
 import com.github.aesteve.nubes.orm.queries.FindById;
 import com.github.aesteve.vertx.nubes.annotations.Controller;
@@ -42,7 +41,6 @@ public class UserApiController {
 	// Logged users only
 
 	@GET("/me")
-	@SessionPerRequest
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	public ProjuiceUser getMyInfos(@User ProjuiceUser me) {
 		return me;

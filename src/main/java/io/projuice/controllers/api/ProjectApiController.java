@@ -34,7 +34,7 @@ import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
 
 @Controller("/api/1/projects")
 @ContentType("application/json")
-public class ProjectApiController {
+public class ProjectApiController extends CheckController {
 
 	@Service(MongoNubes.MONGO_SERVICE_NAME)
 	private MongoService mongo;
@@ -78,16 +78,12 @@ public class ProjectApiController {
 	@GET("/:projectId/")
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	public void getProject(RoutingContext context, @Param String projectId, @User ProjuiceUser currentUser, Payload<Project> payload) {
-		FindBy<Project> findById = new FindBy<>(Project.class, "id", projectId);
-		mongo.findBy(findById, AsyncUtils.failOr(context, res -> {
-			Project project = res.result();
-			if (project == null || !currentUser.isMemberOf(project)) {
-				context.fail(404);
-				return;
-			}
+
+		checkUserHasAccessToProject(context, currentUser, projectId, project -> {
 			payload.set(project);
 			context.next();
-		}));
+		});
+
 	}
 
 	@PUT("/:projectId/")
@@ -95,17 +91,11 @@ public class ProjectApiController {
 	@Update
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	public void updateProject(RoutingContext context, @Param String projectId, @User ProjuiceUser currentUser, @RequestBody Project createdProject, Payload<UpdateBy<Project>> payload) {
-		FindBy<Project> findById = new FindBy<>(Project.class, "id", projectId);
-		mongo.findBy(findById, AsyncUtils.failOr(context, res -> {
-			Project project = res.result();
-			if (project == null || !currentUser.isMemberOf(project)) {
-				context.fail(404);
-			} else if (!currentUser.isAdminOf(project)) {
-				context.fail(403);
-			} else {
-				payload.set(new UpdateBy<>(createdProject, "id", projectId));
-				context.next();
-			}
-		}));
+
+		checkUserIsProjectAdmin(context, currentUser, projectId, project -> {
+			payload.set(new UpdateBy<>(createdProject, "id", projectId));
+			context.next();
+		});
+
 	}
 }

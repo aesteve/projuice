@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
+
 public class StringUtils {
 
 	public static List<String> transformAll(Function<String, String> transformation, List<String> original) {
@@ -43,5 +46,12 @@ public class StringUtils {
 		}
 		return item.toUpperCase();
 	};
+
+	public static String smallHash(String original) {
+		return Hashing.sha256()
+				.hashString(original, Charsets.UTF_8)
+				.toString()
+				.substring(0, 10);
+	}
 
 }
