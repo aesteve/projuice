@@ -18,5 +18,5 @@ test-results
 test-tmp
 *.class
 .vertx
-web/node_modules
 web/assets/scripts/*
+node_modules/
