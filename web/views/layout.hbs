@@ -5,9 +5,6 @@
 		<link rel="stylesheet" type="text/css" href="/assets/stylesheets/libs/foundation.min.css">
 		<link rel="stylesheet" type="text/css" href="/assets/stylesheets/libs/octicons.css">
 		<link rel="stylesheet" type="text/css" href="/assets/stylesheets/main.css">
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/6.0.20/browser.min.js"></script>
-		{{#block "scripts" }}
-		{{/block}}
     </head>
     <body>
 		<div id="main-menu">
@@ -43,6 +40,8 @@
 		</div>
 
 		{{#block "content" }}
+		{{/block}}
+		{{#block "scripts" }}
 		{{/block}}
 	</body>
 </html>

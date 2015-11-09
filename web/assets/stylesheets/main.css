@@ -370,3 +370,12 @@ h1 {
 h2 {
     font-size:1.1em;
 }
+
+#login-form table {
+	width: 700px;
+	margin: 0 auto;
+}
+
+#login-form #login-btn {
+	width:100%;
+}

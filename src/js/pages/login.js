@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
-export default LoginForm extends Component {
+export default class LoginForm extends Component {
 	
 	constructor(props) {
 		super(props);
@@ -41,9 +42,11 @@ export default LoginForm extends Component {
 				</tr>
 				<tr>
 					<td></td>
-					<td><button onClick={this.login}>Log in</button></td>
+					<td><button id="login-btn" onClick={this.login}>Log in</button></td>
 				</tr>
 			</table>
 		);
 	}
 }
+
+ReactDOM.render(<LoginForm />, document.querySelector("#login-form"));
