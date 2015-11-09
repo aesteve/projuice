@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.github.aesteve.nubes.orm.annotations.Create;
-import com.github.aesteve.nubes.orm.annotations.RetrieveById;
 import com.github.aesteve.nubes.orm.annotations.Update;
 import com.github.aesteve.nubes.orm.mongo.MongoNubes;
 import com.github.aesteve.nubes.orm.mongo.services.MongoService;
@@ -77,19 +76,36 @@ public class ProjectApiController {
 	}
 
 	@GET("/:projectId/")
-	@RetrieveById
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public FindBy<Project> getProject(@Param String projectId, @User ProjuiceUser currentUser) {
-		// TODO : check user access
-		return new FindBy<>(Project.class, "id", projectId);
+	public void getProject(RoutingContext context, @Param String projectId, @User ProjuiceUser currentUser, Payload<Project> payload) {
+		FindBy<Project> findById = new FindBy<>(Project.class, "id", projectId);
+		mongo.findBy(findById, AsyncUtils.failOr(context, res -> {
+			Project project = res.result();
+			if (project == null || !currentUser.isMemberOf(project)) {
+				context.fail(404);
+				return;
+			}
+			payload.set(project);
+			context.next();
+		}));
 	}
 
 	@PUT("/:projectId/")
 	@PATCH("/:projectId/")
 	@Update
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public UpdateBy<Project> updateProject(@Param String projectId, @RequestBody Project project) {
-		// TODO : check user access
-		return new UpdateBy<>(project, "id", projectId);
+	public void updateProject(RoutingContext context, @Param String projectId, @User ProjuiceUser currentUser, @RequestBody Project createdProject, Payload<UpdateBy<Project>> payload) {
+		FindBy<Project> findById = new FindBy<>(Project.class, "id", projectId);
+		mongo.findBy(findById, AsyncUtils.failOr(context, res -> {
+			Project project = res.result();
+			if (project == null || !currentUser.isMemberOf(project)) {
+				context.fail(404);
+			} else if (!currentUser.isAdminOf(project)) {
+				context.fail(403);
+			} else {
+				payload.set(new UpdateBy<>(createdProject, "id", projectId));
+				context.next();
+			}
+		}));
 	}
 }
