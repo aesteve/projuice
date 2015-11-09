@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import { PropTypes } from 'react-router';
 import ReactDOM from 'react-dom';
 import StateButton from '../components/state-btn';
 import { post } from '../io/api';
 import { getCookie, setCookie } from '../io/cookies';
 
 export default class LoginForm extends Component {
-	
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -17,7 +18,7 @@ export default class LoginForm extends Component {
 		this.setPassword = this.setPassword.bind(this);
 		this.login = this.login.bind(this);
 	}
-	
+
 	setUsername(e) {
 		this.setState({
 			username: e.target.value
@@ -29,7 +30,7 @@ export default class LoginForm extends Component {
 			password: e.target.value
 		});
 	}
-	
+
 	login() {
 		const credentials = {
 			username: this.state.username,
@@ -46,7 +47,7 @@ export default class LoginForm extends Component {
 				});
 			} else {
 				setCookie("access_token", res.body.access_token);
-				document.location = "/index";
+				this.props.history.pushState(null, '/projects');
 			}
 		});
 	}
@@ -54,24 +55,26 @@ export default class LoginForm extends Component {
 	render() {
 		const error = this.state.status === 'error' ? this.state.error : '';
 		return (
-			<table>
-				<tbody>
-					<tr>
-						<td>Username:</td>
-						<td><input type="text" onChange={this.setUsername} value={this.state.username} /></td>
-					</tr>
-					<tr>
-						<td>Password:</td>
-						<td><input type="password" onChange={this.setPassword} value={this.state.password} /></td>
-					</tr>
-					<tr>
-						<td>{error}</td>
-						<td><button id="login-btn" onClick={this.login}>Log in</button></td>
-					</tr>
-				</tbody>
-			</table>
+			<div id="login-form">
+				<table>
+					<tbody>
+						<tr>
+							<td>Username:</td>
+							<td><input type="text" onChange={this.setUsername} value={this.state.username} /></td>
+						</tr>
+						<tr>
+							<td>Password:</td>
+							<td><input type="password" onChange={this.setPassword} value={this.state.password} /></td>
+						</tr>
+						<tr>
+							<td>{error}</td>
+							<td><button id="login-btn" onClick={this.login}>Log in</button></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		);
 	}
 }
 
-ReactDOM.render(<LoginForm />, document.querySelector("#login-form"));
+LoginForm.contextTypes = {history: PropTypes.history};

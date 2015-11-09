@@ -21,15 +21,5 @@ export function get(path, callback) {
 		.type('application/json')
 		.accept('application/json')
 		.set({'Authorization': 'token ' + getCookie('access_token')})
-		.end(handle401(callback));
+		.end(callback);
 }
-
-const handle401 = callback => {
-	return (err, res) => {
-		if (err && err.status === 401) {
-			document.location = '/login';
-		} else {
-			callback(err, res);
-		}
-	};
-} 

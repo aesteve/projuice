@@ -9,47 +9,43 @@ var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var es = require('event-stream');
-var argv = require('yargs').argv;
-
+var sourcemaps = require('gulp-sourcemaps');
 
 var requireFiles = './node_modules/react/react.js';
 
-
-
-function compileScripts(page, reload) {
-    gutil.log('Starting browserify: ' + page);
-
-    /*
-   	var startName = entry.lastIndexOf('/') + 1;
-	var endName = entry.lastIndexOf('.js');
-	var newName = entry.substring(startName, endName);
-	*/
-
+function compileScripts(reload) {
+    gutil.log('Starting browserify');
     var browserifyer = browserify({
-    	cache: {}, packageCache: {}, fullPaths: true,
-    	entries: ['./src/js/pages/' + page + '.js'],
+    	cache: {},
+      packageCache: {},
+      fullPaths: true,
+    	entries: ['./src/js/app.js'],
     	extensions: ['.js'],
     	debug:reload
     }).transform(babelify, {presets: ["es2015", "react"]});
-    
+
     var bundler = watchify(browserifyer);
-    
-    function rebundle(entry) {
+
+    function rebundle() {
     	bundler.bundle()
-    		.on('error', function(err) {
-    	        console.error(err);
-    	        this.emit('end');
-    	    })
-            .pipe(source('./src/js/pages/' + page + '.js'))
-            .pipe(buffer())
-            .pipe(rename({
-            	dirname:'./',
-            	basename:page,
-                extname: '.min.js'
-            }))
-            .pipe(gulp.dest('./web/assets/scripts'));
+        .on('error', function(err) {
+          console.error(err);
+          this.emit('end');
+        })
+        .pipe(source('./src/js/app.js'))
+        .pipe(buffer())
+        .pipe(sourcemaps.init({
+          loadMaps: true
+        })) // loads map from browserify file
+        .pipe(sourcemaps.write()) // writes .map file
+        .pipe(rename({
+          dirname:'./',
+          basename:'app',
+          extname: '.min.js'
+        }))
+        .pipe(gulp.dest('./web/assets/scripts'));
     }
-        	
+
     if (reload) {
     	bundler.on('update', function() {
     		console.log('-> bundling...');
@@ -60,5 +56,5 @@ function compileScripts(page, reload) {
 }
 
 gulp.task('dev', function () {
-	compileScripts(argv.page, true);
+	compileScripts(true);
 });

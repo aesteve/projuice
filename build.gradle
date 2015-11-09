@@ -24,9 +24,6 @@ dependencies {
 	compile "io.vertx:vertx-web-templ-handlebars:${VERTX_VERSION}"
 	compile "io.vertx:vertx-redis-client:${VERTX_VERSION}"
 
-	// Handlebars
-	runtime 'com.github.jknack:handlebars:2.1.0'
-	
 	testCompile "io.vertx:vertx-unit:${VERTX_VERSION}"
 	testCompile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.50.0'
 	testCompile 'junit:junit:4.12'

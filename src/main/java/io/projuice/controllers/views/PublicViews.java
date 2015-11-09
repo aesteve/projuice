@@ -1,21 +1,16 @@
 package io.projuice.controllers.views;
 
 import com.github.aesteve.vertx.nubes.annotations.Controller;
-import com.github.aesteve.vertx.nubes.annotations.View;
 import com.github.aesteve.vertx.nubes.annotations.routing.http.GET;
+
+import io.vertx.core.http.HttpServerResponse;
 
 @Controller("/")
 public class PublicViews {
 
-	@GET("index")
-	@View("index.hbs")
-	public void index() {}
-
-	@GET("login")
-	@View("login.hbs")
-	public void login() {}
-
-	@GET("register")
-	@View("register.hbs")
-	public void register() {}
+	@GET
+	public void index(HttpServerResponse response) {
+		response.sendFile("web/views/index.html");
+	}
+	
 }

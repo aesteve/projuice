@@ -101,7 +101,7 @@ progress::-moz-progress-bar {
 
 .spacer-bottom {
 	margin-bottom:1rem;
-} 
+}
 
 .spacer-top {
 	margin-top:1rem;
@@ -369,6 +369,10 @@ h1 {
 
 h2 {
     font-size:1.1em;
+}
+
+#login-form {
+	margin-top: 50px;
 }
 
 #login-form table {

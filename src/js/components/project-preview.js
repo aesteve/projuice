@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router';
 
 export default class ProjectPreview extends Component {
 	render() {
@@ -7,7 +8,7 @@ export default class ProjectPreview extends Component {
 		return (
 			<div className="project-preview">
 				<div className="name">
-					<a href={projectLink}>{project.name}</a>
+					<Link to={projectLink}>{project.name}</Link>
 				</div>
 				<div className="description">
 					{project.description}

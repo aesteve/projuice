@@ -5,10 +5,12 @@
   "name": "projuice",
   "repository": "aesteve/projuice",
   "dependencies": {
+    "history": "^1.13.0",
     "immutable": "3.7.5",
     "moment": "2.10.6",
     "react": "0.14.2",
     "react-dom": "0.14.2",
+    "react-router": "^1.0.0-rc4",
     "superagent": "1.4.0",
     "superagent-prefix": "0.0.2"
   },
@@ -20,10 +22,10 @@
     "event-stream": "3.3.2",
     "gulp": "3.9.0",
     "gulp-rename": "1.2.2",
+    "gulp-sourcemaps": "^1.6.0",
     "gulp-util": "3.0.7",
     "vinyl-buffer": "1.0.0",
     "vinyl-source-stream": "1.1.0",
-    "watchify": "3.6.0",
-    "yargs": "3.29.0"
+    "watchify": "3.6.0"
   }
 }
