@@ -59,8 +59,16 @@ public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 		return project.getParticipants().stream().anyMatch(this::belongsToRole);
 	}
 
+	public boolean isAdminOf(Project project) {
+		return project.getParticipants().stream().anyMatch(this::isAdmin);
+	}
+
 	public boolean belongsToRole(UserRoleInProject role) {
 		return role.getUser().equals(username);
+	}
+
+	public boolean isAdmin(UserRoleInProject role) {
+		return role.getUser().equals(username) && role.getRole() == Role.ADMIN;
 	}
 
 	@Override
