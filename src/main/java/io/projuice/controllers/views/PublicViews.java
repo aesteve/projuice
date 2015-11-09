@@ -7,6 +7,10 @@ import com.github.aesteve.vertx.nubes.annotations.routing.http.GET;
 @Controller("/")
 public class PublicViews {
 
+	@GET("index")
+	@View("index.hbs")
+	public void index() {}
+
 	@GET("login")
 	@View("login.hbs")
 	public void login() {}

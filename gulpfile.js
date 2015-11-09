@@ -9,18 +9,16 @@ var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var es = require('event-stream');
+var argv = require('yargs').argv;
 
 
 var requireFiles = './node_modules/react/react.js';
 
 
-function compileScripts(reload) {
-    gutil.log('Starting browserify');
 
-    var files = [
-    	'./src/js/pages/login.js'
-    ];
-    
+function compileScripts(page, reload) {
+    gutil.log('Starting browserify: ' + page);
+
     /*
    	var startName = entry.lastIndexOf('/') + 1;
 	var endName = entry.lastIndexOf('.js');
@@ -29,7 +27,7 @@ function compileScripts(reload) {
 
     var browserifyer = browserify({
     	cache: {}, packageCache: {}, fullPaths: true,
-    	entries: ['./src/js/pages/login.js'],
+    	entries: ['./src/js/pages/' + page + '.js'],
     	extensions: ['.js'],
     	debug:reload
     }).transform(babelify, {presets: ["es2015", "react"]});
@@ -42,11 +40,11 @@ function compileScripts(reload) {
     	        console.error(err);
     	        this.emit('end');
     	    })
-            .pipe(source('./src/js/pages/login.js'))
+            .pipe(source('./src/js/pages/' + page + '.js'))
             .pipe(buffer())
             .pipe(rename({
             	dirname:'./',
-            	basename:'login',
+            	basename:page,
                 extname: '.min.js'
             }))
             .pipe(gulp.dest('./web/assets/scripts'));
@@ -61,11 +59,6 @@ function compileScripts(reload) {
     rebundle();
 }
 
-
-gulp.task('compile', function () {
-	compileScripts();
-});
-
 gulp.task('dev', function () {
-	compileScripts(true);
+	compileScripts(argv.page, true);
 });
