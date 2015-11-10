@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { PropTypes } from 'react-router';
 import ReactDOM from 'react-dom';
 import StateButton from '../components/state-btn';
-import { post } from '../io/api';
+import ApiClient from '../io/api';
 import { getCookie, setCookie } from '../io/cookies';
+import RequestStatus from '../components/request-status';
 
 export default class LoginForm extends Component {
 
@@ -17,6 +18,7 @@ export default class LoginForm extends Component {
 		this.setUsername = this.setUsername.bind(this);
 		this.setPassword = this.setPassword.bind(this);
 		this.login = this.login.bind(this);
+		this.apiClient = new ApiClient(this.props.history);
 	}
 
 	setUsername(e) {
@@ -39,7 +41,7 @@ export default class LoginForm extends Component {
 		this.setState({
 			status: 'pending'
 		});
-		post('/login', credentials, (err, res) => {
+		this.apiClient.login(credentials, (err, res) => {
 			if (err) {
 				this.setState({
 					status: 'error',
@@ -47,15 +49,19 @@ export default class LoginForm extends Component {
 				});
 			} else {
 				setCookie("access_token", res.body.access_token);
+				this.setState({
+					pending: 'done',
+					error: null
+				});
 				this.props.history.pushState(null, '/projects');
 			}
 		});
 	}
 
 	render() {
-		const error = this.state.status === 'error' ? this.state.error : '';
 		return (
 			<div id="login-form">
+				<RequestStatus {...this.state} />
 				<table>
 					<tbody>
 						<tr>
@@ -67,7 +73,7 @@ export default class LoginForm extends Component {
 							<td><input type="password" onChange={this.setPassword} value={this.state.password} /></td>
 						</tr>
 						<tr>
-							<td>{error}</td>
+							<td></td>
 							<td><button id="login-btn" onClick={this.login}>Log in</button></td>
 						</tr>
 					</tbody>

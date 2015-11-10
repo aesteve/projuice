@@ -1,48 +1,39 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { get } from '../io/api';
 import ProjectPreview from '../components/project-preview';
-import Loader from '../components/loader';
+import RequestStatus from '../components/request-status';
+import ApiClient from '../io/api';
+import { injectResponseAsState } from '../components/request-utils';
 
 export default class Projects extends Component {
 
 	constructor(props) {
 		super(props);
+		this.apiClient = new ApiClient(this.props.history);
 		this.state = {
-			pending: true
+			requests:this.apiClient.requests
 		};
 	}
 
 	componentDidMount() {
-		get('/projects', (err, res) => {
-			if (err) {
-				this.setState({
-					error: err,
-					pending: false
-				});
-			} else {
-				this.setState({
-					error: null,
-					pending: false,
-					projects: res.body
-				});
-			}
-		});
+		this.apiClient.get('/projects', injectResponseAsState(this, 'projects'));
 	}
 
 	render() {
 		let projectsJSX;
-		const { pending, error, projects } = this.state;
+		const { projects } = this.state;
 		if (projects) {
 			projectsJSX = projects.map(project => {
-				return <ProjectPreview project={project} />;
+				return <ProjectPreview key={project} project={project} />;
 			});
 		}
 		return (
 			<div>
-				{this.state.pending && <Loader />}
-				{this.state.error && <Error error={this.state.error} />}
+				<RequestStatus {...this.state} />
 				{projectsJSX}
 			</div>
 		);
 	}
 }
+
+Projects.contextTypes = {history: PropTypes.history};

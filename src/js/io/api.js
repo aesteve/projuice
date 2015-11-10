@@ -3,23 +3,47 @@ import prefix from 'superagent-prefix';
 import { getCookie } from './cookies';
 
 const thePrefix = prefix('/api/1');
+const DEFAULT_LOGIN_PAGE = "/login";
 
-export function post(path, data, callback) {
-	return request
-		.post(path)
-		.use(thePrefix)
-		.type('json')
-		.accept('json')
-		.send(data)
-		.end(callback);
-}
+export default class ApiClient {
 
-export function get(path, callback) {
-	return request
-		.get(path)
-		.use(thePrefix)
-		.type('application/json')
-		.accept('application/json')
-		.set({'Authorization': 'token ' + getCookie('access_token')})
-		.end(callback);
+	constructor() {
+		this.accessToken = getCookie('access_token');
+	}
+
+	login(credentials, callback) {
+		return this._doReq('POST', '/login', credentials, callback);
+	}
+
+	get(path, callback) {
+		return this._doReq('GET', path, null, callback);
+	}
+
+	post(path, data, callback) {
+		return this._doReq('POST', path, data, callback);
+	}
+
+	put(path, data, callback) {
+		return this._doReq('PUT', path, data, callback);
+	}
+
+	delete(path, data, callback) {
+		return this._doReq('DELETE', path, data, callback);
+	}
+
+	_doReq(method, path, data, callback, redirect) {
+		const token = this.accessToken || getCookie('access_token');
+		const req = request(method, path)
+				.use(thePrefix)
+				.type('application/json')
+				.accept('application/json');
+		if (token) {
+			req.set({'Authorization': 'token ' + token})
+		}
+		if (data) {
+			req.send(data);
+		}
+		req.end(callback);
+		return req;
+	}
 }

@@ -6,45 +6,38 @@ import Menu from './components/menu';
 import Login from './pages/login';
 import Projects from './pages/projects';
 import Project from './pages/project';
-import { get } from './io/api';
-import Loader from './components/loader';
-import Error from './components/display-error';
+import ApiClient from './io/api';
+import RequestStatus from './components/request-status';
+import { injectResponseAsState } from './components/request-utils';
 
+const mapStateToProps = (state, props) => {
+	return {
+		tokenStatus: state.tokenStatus,
+		user: state.users.me
+	};
+};
+
+@connect(mapStateToProps)
 export default class App extends Component {
 
 	constructor(props) {
-			super(props);
-			this.state = {
-				pending: true
-			};
+		super(props);
+		this.state = {
+			pending: true
+		};
+		this.apiClient = new ApiClient(this.props.history);
 	}
 
 	componentDidMount() {
-		get('/users/me', (err, res) => {
-			if (err && err.status === 401) {
-				this.props.history.pushState(null, '/login');
-			} else if (err) {
-				this.setState({
-					error: err,
-					pending: false
-				});
-			} else {
-				this.setState({
-					error: null,
-					pending: false,
-					user: res.body
-				});
-			}
-		});
+		store.dispatch(fetchMyInfos());
 	}
 
 	render() {
-		const { error, pending, user } = this.state;
+		const { user } = this.state;
 		return (
 			<div>
+				<RequestStatus {...this.state} />
 				<Menu user={user} />
-				{pending && <Loader />}
-				{error && <Error error={error} />}
 				{this.props.children}
 			</div>
 		);
@@ -53,9 +46,20 @@ export default class App extends Component {
 
 App.contextTypes = {history: PropTypes.history};
 
+
+class ProviderApp extends Component {
+	render() {
+		return (
+			<Provider store={store} key="provider">
+				{() => <App store={store} />}
+			</Provider>
+		);
+	}
+}
+
 render((
 	<Router>
-		<Route path="/" component={App}>
+		<Route path="/" component={ProviderApp}>
 			<Route path="login" component={Login} />
 			<Route path="projects">
 				<IndexRoute component={Projects} />

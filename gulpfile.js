@@ -50,6 +50,7 @@ function compileScripts(reload) {
     	bundler.on('update', function() {
     		console.log('-> bundling...');
     		rebundle();
+            console.log('-> ...done');
     	});
     }
     rebundle();

@@ -1,39 +1,33 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Loader from '../components/loader';
 import Issues from '../components/issues';
 import TeamMembers from '../components/team-members';
-import { get } from '../io/api';
-import Error from '../components/display-error';
+import ApiClient from '../io/api';
+import RequestStatus from '../components/request-status';
+import { injectResponseAsState } from '../components/request-utils';
 
 export default class Project extends Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			status: null
+		};
+		this.apiClient = new ApiClient(this.props.history);
 	}
 
 	componentDidMount() {
-		get('/projects/' + this.props.params.projectId + '/', (err, res) => {
-			if (err) {
-				this.setState({
-					pending: false,
-					error: err
-				});
-			} else {
-				this.setState({
-					pending: false,
-					project: res.body
-				});
-			}
+		this.setState({
+			status: 'pending'
 		});
+		this.apiClient.get('/projects/' + this.props.params.projectId + '/', injectResponseAsState(this, 'project'));
 	}
 
 	render() {
-		const { project, pending, error } = this.state;
+		const { project } = this.state;
 		return (
 			<div>
-				{error && <Error error={error} />}
-				{pending && <Loader />}
+				<RequestStatus {...this.state} />
 				{project &&
 					<div>
 						<h1>{project.name}</h1>
@@ -50,3 +44,5 @@ export default class Project extends Component {
 		);
 	}
 }
+
+Project.contextTypes = {history: PropTypes.history};
