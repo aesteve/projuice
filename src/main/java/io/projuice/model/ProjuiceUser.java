@@ -14,6 +14,7 @@ public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 	private String username;
 	private String emailAddress;
 	private String githubId;
+	@JsonIgnore
 	private String password;
 
 	@JsonIgnore
