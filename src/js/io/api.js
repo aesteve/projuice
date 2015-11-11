@@ -3,16 +3,15 @@ import prefix from 'superagent-prefix';
 import { getCookie } from './cookies';
 
 const thePrefix = prefix('/api/1');
-const DEFAULT_LOGIN_PAGE = "/login";
 
 export default class ApiClient {
 
-	constructor() {
-		this.accessToken = getCookie('access_token');
-	}
-
 	login(credentials, callback) {
 		return this._doReq('POST', '/login', credentials, callback);
+	}
+
+	logout(callback) {
+		return this._doReq('POST', '/logout', null, callback);
 	}
 
 	get(path, callback) {
@@ -32,7 +31,7 @@ export default class ApiClient {
 	}
 
 	_doReq(method, path, data, callback, redirect) {
-		const token = this.accessToken || getCookie('access_token');
+		const token = getCookie('access_token');
 		const req = request(method, path)
 				.use(thePrefix)
 				.type('application/json')

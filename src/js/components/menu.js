@@ -1,24 +1,28 @@
-import React, { Component } from 'react';
-import { Link } from'react-router';
+import React, { Component, PropTypes } from 'react';
+import { Link } from 'react-router';
+import { logout } from '../actions/login';
+import { connect } from 'react-redux';
+
+const mapStateToProps = state => {
+	return {
+		user: state.myInfos
+	};
+};
 
 class CredentialsSection extends Component {
 
-	constructor(props) {
-		super(props);
-		this.logout.bind(this);
-	}
-
 	logout() {
-		console.error("NYI");
+		this.props.dispatch(logout());
 	}
 
 	render() {
 		const { user } = this.props;
-		if (user) {
+		const { infos } = user;
+		if (infos) {
 			return (
 				<ul className="right">
-					<li><Link to="/profile">Hello {user.username}</Link></li>
-					<li><a href="javascript:void(0);" onClick={this.logout}>Log out</a></li>
+					<li><Link to="/profile">Hello {infos.username}</Link></li>
+					<li><a href="javascript:void(0);" onClick={this.logout.bind(this)}>Log out</a></li>
 				</ul>
 			);
 		} else {
@@ -32,7 +36,7 @@ class CredentialsSection extends Component {
 	}
 }
 
-export default class Menu extends Component {
+class Menu extends Component {
 	render() {
 		return (
 			<div id="main-menu">
@@ -43,7 +47,7 @@ export default class Menu extends Component {
 						</li>
 					</ul>
 					<section className="top-bar-section">
-						<CredentialsSection user={this.props.user} />
+						<CredentialsSection {...this.props} />
 						<ul className="left">
 							<li><Link to="/projects" activeStyle={{background: "#008cba"}}>Projects</Link></li>
 						</ul>
@@ -53,3 +57,7 @@ export default class Menu extends Component {
 		);
 	}
 }
+
+Menu.contextTypes = {history: PropTypes.history};
+
+export default connect(mapStateToProps)(Menu);

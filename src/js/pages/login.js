@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import { PropTypes } from 'react-router';
-import ReactDOM from 'react-dom';
 import StateButton from '../components/state-btn';
-import ApiClient from '../io/api';
-import { getCookie, setCookie } from '../io/cookies';
 import RequestStatus from '../components/request-status';
+import { connect } from 'react-redux';
+import { login } from '../actions/login';
+
+const mapStateToProps = state => {
+	return {
+		loginState: state.login
+	};
+};
 
 export default class LoginForm extends Component {
 
@@ -18,7 +23,14 @@ export default class LoginForm extends Component {
 		this.setUsername = this.setUsername.bind(this);
 		this.setPassword = this.setPassword.bind(this);
 		this.login = this.login.bind(this);
-		this.apiClient = new ApiClient(this.props.history);
+	}
+
+	componentWillReceiveProps(newProps) {
+		const { loginState } = newProps;
+		if (loginState && !loginState.inProgress && loginState.accessToken) {
+			// login success
+			this.context.history.pushState(null, '/projects');
+		}
 	}
 
 	setUsername(e) {
@@ -38,30 +50,13 @@ export default class LoginForm extends Component {
 			username: this.state.username,
 			password: this.state.password
 		};
-		this.setState({
-			status: 'pending'
-		});
-		this.apiClient.login(credentials, (err, res) => {
-			if (err) {
-				this.setState({
-					status: 'error',
-					error: err
-				});
-			} else {
-				setCookie("access_token", res.body.access_token);
-				this.setState({
-					pending: 'done',
-					error: null
-				});
-				this.props.history.pushState(null, '/projects');
-			}
-		});
+		this.props.dispatch(login(credentials));
 	}
 
 	render() {
 		return (
 			<div id="login-form">
-				<RequestStatus {...this.state} />
+				<RequestStatus {...this.props.auth} />
 				<table>
 					<tbody>
 						<tr>
@@ -74,7 +69,7 @@ export default class LoginForm extends Component {
 						</tr>
 						<tr>
 							<td></td>
-							<td><button id="login-btn" onClick={this.login}>Log in</button></td>
+							<td><button style={{width: '100%'}} id="login-btn" onClick={this.login}>Log in</button></td>
 						</tr>
 					</tbody>
 				</table>
@@ -84,3 +79,5 @@ export default class LoginForm extends Component {
 }
 
 LoginForm.contextTypes = {history: PropTypes.history};
+
+export default connect(mapStateToProps)(LoginForm);

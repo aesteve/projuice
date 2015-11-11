@@ -1,22 +1,24 @@
 import {
 	LOGIN_PROGRESS,
-	LOGIN_FINISHED
-} from './action-types';
+	LOGIN_FINISHED,
+	LOGOUT_PROGRESS,
+	LOGOUT_FINISHED
+} from '../actions/action-types';
 import { setCookie } from '../io/cookies';
 
 const initialState = {
 	accessToken: null,
-	loginProgress: false,
-	loginError: null
+	inProgress: false,
+	err: null
 };
 
 export default function updateContext(state = initialState, action = {}) {
 	switch(action.type) {
 		case LOGIN_PROGRESS:
+		case LOGOUT_PROGRESS:
 			return {
-				...state,
-				loginProgress: true,
-				loginError: false,
+				inProgress: true,
+				err: null,
 				accessToken: null
 			};
 		case LOGIN_FINISHED:
@@ -27,10 +29,15 @@ export default function updateContext(state = initialState, action = {}) {
 				setCookie('access_token', accessToken)
 			}
 			return {
-				...state,
-				loginProgress: false,
-				loginError: action.err,
+				inProgress: false,
+				err: action.err,
 				accessToken: accessToken
+			};
+		case LOGOUT_FINISHED:
+			return {
+				inProgress: false,
+				err: action.err,
+				accessToken: null
 			};
 		default:
 			return state;

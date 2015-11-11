@@ -7,10 +7,15 @@
   "dependencies": {
     "history": "^1.13.0",
     "immutable": "3.7.5",
+    "lodash": "3.10.1",
     "moment": "2.10.6",
     "react": "0.14.2",
     "react-dom": "0.14.2",
+    "react-mixin": "3.0.3",
+    "react-redux": "4.0.0",
     "react-router": "^1.0.0-rc4",
+    "redux": "3.0.4",
+    "redux-thunk": "1.0.0",
     "superagent": "1.4.0",
     "superagent-prefix": "0.0.2"
   },

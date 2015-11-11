@@ -1,6 +1,6 @@
 import {
 	UNAUTHORIZED
-} from './action-types';
+} from '../actions/action-types';
 
 const initialState = {
 	authorized: true

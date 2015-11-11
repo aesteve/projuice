@@ -1,4 +1,4 @@
-import ApiClient from '../io/api-client';
+import ApiClient from '../io/api';
 import {
 	FETCH_INFO_PROGRESS,
 	FETCH_INFO_FINISHED,
@@ -20,7 +20,7 @@ function dispatchApiResult(dispatch, type) {
 			});
 		}
 		dispatch({
-			type: FETCH_INFO_FINISHED,
+			type: type,
 			err: err,
 			res: res
 		});

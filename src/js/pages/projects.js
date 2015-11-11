@@ -1,32 +1,34 @@
 import React, { Component, PropTypes } from 'react';
-import { get } from '../io/api';
 import ProjectPreview from '../components/project-preview';
 import RequestStatus from '../components/request-status';
-import ApiClient from '../io/api';
-import { injectResponseAsState } from '../components/request-utils';
+import { connect } from 'react-redux';
+import { privatePage } from '../utils/composition';
+import { fetchProjects } from '../actions/projects';
+import _ from 'lodash';
+
+const mapStateToProps = state => {
+	return {
+		projects: state.projects,
+		user: state.myInfos,
+		tokenStatus: state.tokenStatus
+	};
+};
 
 export default class Projects extends Component {
 
-	constructor(props) {
-		super(props);
-		this.apiClient = new ApiClient(this.props.history);
-		this.state = {
-			requests:this.apiClient.requests
-		};
-	}
-
 	componentDidMount() {
-		this.apiClient.get('/projects', injectResponseAsState(this, 'projects'));
+		this.props.dispatch(fetchProjects());
 	}
 
 	render() {
-		let projectsJSX;
-		const { projects } = this.state;
-		if (projects) {
-			projectsJSX = projects.map(project => {
-				return <ProjectPreview key={project} project={project} />;
-			});
+		const { projects } = this.props;
+		if (!projects.projects) {
+			return null;
 		}
+		const proj = projects.projects;
+		const projectsJSX = _.map(proj, (projectId, project) => {
+			return <ProjectPreview key={projectId} project={project} />;
+		});
 		return (
 			<div>
 				<RequestStatus {...this.state} />
@@ -37,3 +39,5 @@ export default class Projects extends Component {
 }
 
 Projects.contextTypes = {history: PropTypes.history};
+
+export default connect(mapStateToProps)(privatePage(Projects));

@@ -372,14 +372,11 @@ h2 {
 }
 
 #login-form {
-	margin-top: 50px;
-}
-
-#login-form table {
+	padding-top: 50px;
 	width: 700px;
 	margin: 0 auto;
 }
 
-#login-form #login-btn {
-	width:100%;
+#login-form table {
+	width: 100%;
 }

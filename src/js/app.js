@@ -1,44 +1,39 @@
+// React / redux
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import { Router, Route, Link, IndexRoute, PropTypes } from 'react-router'
+import { Router, Route, Link, IndexRoute, PropTypes } from 'react-router';
+import { Provider } from 'react-redux';
+import { connect } from 'react-redux';
+import { createStore } from 'redux';
+// Pages
 import NoMatch from './pages/404';
 import Menu from './components/menu';
 import Login from './pages/login';
 import Projects from './pages/projects';
 import Project from './pages/project';
-import ApiClient from './io/api';
-import RequestStatus from './components/request-status';
-import { injectResponseAsState } from './components/request-utils';
+import Index from './pages/index';
+import { fetchMyInfos } from './actions/users';
+// Reducers
+import { store } from './utils/redux-utils';
 
 const mapStateToProps = (state, props) => {
 	return {
-		tokenStatus: state.tokenStatus,
-		user: state.users.me
+		user: state.myInfos.infos
 	};
 };
 
-@connect(mapStateToProps)
 export default class App extends Component {
-
-	constructor(props) {
-		super(props);
-		this.state = {
-			pending: true
-		};
-		this.apiClient = new ApiClient(this.props.history);
-	}
 
 	componentDidMount() {
 		store.dispatch(fetchMyInfos());
 	}
 
 	render() {
-		const { user } = this.state;
+		const { user, children } = this.props;
 		return (
 			<div>
-				<RequestStatus {...this.state} />
 				<Menu user={user} />
-				{this.props.children}
+				{children}
 			</div>
 		);
 	}
@@ -46,20 +41,12 @@ export default class App extends Component {
 
 App.contextTypes = {history: PropTypes.history};
 
+const ConnectedApp = connect(mapStateToProps)(App);
 
-class ProviderApp extends Component {
-	render() {
-		return (
-			<Provider store={store} key="provider">
-				{() => <App store={store} />}
-			</Provider>
-		);
-	}
-}
-
-render((
+const routes = (
 	<Router>
-		<Route path="/" component={ProviderApp}>
+		<Route path="/" component={ConnectedApp}>
+			<IndexRoute component={Index} />
 			<Route path="login" component={Login} />
 			<Route path="projects">
 				<IndexRoute component={Projects} />
@@ -68,4 +55,16 @@ render((
 			<Route path="*" component={NoMatch} />
 		</Route>
 	</Router>
-), document.body)
+);
+
+class ProviderApp extends Component {
+	render() {
+		return (
+			<Provider store={store} key="provider">
+				{routes}
+			</Provider>
+		);
+	}
+}
+
+render(<ProviderApp />, document.body)
