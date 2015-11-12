@@ -3,7 +3,7 @@
 	"templates": ["hbs"],
 	"mongo": {
 			"host": "localhost",
-			"port": 8889,
-			"db": "projuice-test"
+			"port": 27017,
+			"db_name": "projuice-test"
 	}
 }
