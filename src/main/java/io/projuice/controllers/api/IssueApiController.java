@@ -24,6 +24,7 @@ import com.github.aesteve.vertx.nubes.annotations.routing.http.GET;
 import com.github.aesteve.vertx.nubes.annotations.routing.http.PATCH;
 import com.github.aesteve.vertx.nubes.annotations.routing.http.POST;
 import com.github.aesteve.vertx.nubes.annotations.routing.http.PUT;
+import com.github.aesteve.vertx.nubes.context.PaginationContext;
 import com.github.aesteve.vertx.nubes.exceptions.ValidationException;
 import com.github.aesteve.vertx.nubes.exceptions.http.impl.BadRequestException;
 import com.github.aesteve.vertx.nubes.marshallers.Payload;
@@ -39,6 +40,7 @@ public class IssueApiController extends CheckController {
 			RoutingContext context,
 			@User ProjuiceUser currentUser,
 			Payload<FindBy<Issue>> payload,
+			PaginationContext pageContext,
 			@Param String projectId,
 			@Param IssueStatus status,
 			@Param IssueType type) {
