@@ -9,21 +9,21 @@ export function createStoreWithMiddleware(someReducers) {
 
 export const store = createStoreWithMiddleware(reducers);
 
-export function dispatchApiResult(type, dispatch) {
+export function dispatchApiResult(type, dispatch, additional) {
 	return (err, res) => {
-		dispatchWith401(type, err, res, dispatch);
+		dispatchWith401(type, err, res, dispatch, additional);
 	}
 }
 
-export function dispatchApiResults(types, dispatch) {
+export function dispatchApiResults(types, dispatch, additional) {
 	return (err, res) => {
 		types.forEach(type => {
-			dispatchWith401(type, err, res, dispatch);
+			dispatchWith401(type, err, res, dispatch, additional);
 		});
 	};
 }
 
-function dispatchWith401(type, err, res, dispatch) {
+function dispatchWith401(type, err, res, dispatch, additional) {
 	if (err && err.status === 401) {
 		dispatch({
 			type:UNAUTHORIZED,
@@ -35,9 +35,9 @@ function dispatchWith401(type, err, res, dispatch) {
 			value: false
 		});
 	}
-	dispatch({
-		type: type,
-		err:err,
-		res:res
-	});
+	let result = additional || {};
+	result.type = type;
+	result.err = err;
+	result.res = res;
+	dispatch(result);
 }
