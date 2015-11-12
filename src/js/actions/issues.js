@@ -13,6 +13,6 @@ export function fetchIssues(projectId) {
 			type: FETCH_ISSUES_PROGRESS,
 			projectId: projectId
 		});
-		apiClient.get('/projects/' + projectId + '/issues', dispatchApiResult(FETCH_ISSUES_FINISHED, dispatch));
+		apiClient.get('/projects/' + projectId + '/issues', dispatchApiResult(FETCH_ISSUES_FINISHED, dispatch, {projectId:projectId}));
 	};
 }
