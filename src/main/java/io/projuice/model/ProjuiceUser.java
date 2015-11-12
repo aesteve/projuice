@@ -1,6 +1,7 @@
 package io.projuice.model;
 
 import io.projuice.auth.ProjuiceAuthProvider;
+import io.projuice.model.api.ApiUser;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
@@ -69,6 +70,10 @@ public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 
 	public boolean isAdmin(UserRoleInProject role) {
 		return role.getUser().equals(username) && role.getRole() == Role.ADMIN;
+	}
+
+	public ApiUser toApi() {
+		return new ApiUser(this);
 	}
 
 	@Override
