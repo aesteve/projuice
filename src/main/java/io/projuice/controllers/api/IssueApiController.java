@@ -10,6 +10,7 @@ import io.vertx.ext.web.RoutingContext;
 
 import com.github.aesteve.nubes.orm.annotations.Create;
 import com.github.aesteve.nubes.orm.annotations.RetrieveById;
+import com.github.aesteve.nubes.orm.annotations.RetrieveByQuery;
 import com.github.aesteve.nubes.orm.annotations.Update;
 import com.github.aesteve.nubes.orm.queries.FindBy;
 import com.github.aesteve.nubes.orm.queries.UpdateBy;
@@ -32,6 +33,7 @@ import com.github.aesteve.vertx.nubes.marshallers.Payload;
 public class IssueApiController extends CheckController {
 
 	@GET
+	@RetrieveByQuery
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	public void getProjectIssues(
 			RoutingContext context,
