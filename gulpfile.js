@@ -19,7 +19,7 @@ function compileScripts(reload) {
     	cache: {},
       packageCache: {},
       fullPaths: true,
-    	entries: ['./src/js/app.js'],
+    	entries: ['./src/js/main.js'],
     	extensions: ['.js'],
     	debug:reload
     }).transform(babelify, {presets: ["es2015", "react"]});
@@ -32,7 +32,7 @@ function compileScripts(reload) {
           console.error(err);
           this.emit('end');
         })
-        .pipe(source('./src/js/app.js'))
+        .pipe(source('./src/js/main.js'))
         .pipe(buffer())
         .pipe(sourcemaps.init({
           loadMaps: true
