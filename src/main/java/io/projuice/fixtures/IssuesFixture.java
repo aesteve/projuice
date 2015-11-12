@@ -36,6 +36,7 @@ public class IssuesFixture extends Fixture {
 				}
 				Issue issue = new Issue();
 				issue.setProjectId(projuice.getId());
+				issue.generateId();
 				issue.setName("Design model");
 				issue.setType(IssueType.ENHANCEMENT);
 				issue.setDescription("## Design the whole projuice working model");
