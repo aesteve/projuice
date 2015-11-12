@@ -1,6 +1,7 @@
 import {
 	FETCH_INFO_PROGRESS,
-	FETCH_INFO_FINISHED
+	FETCH_INFO_FINISHED,
+	LOGOUT_FINISHED
 } from '../actions/action-types';
 
 const initialState = {
@@ -23,6 +24,8 @@ export default function updateContext(state = initialState, action = {}) {
 				inProgress: false,
 				infos: body
 			};
+		case LOGOUT_FINISHED:
+			return initialState;
 		default:
 			return state;
 	}

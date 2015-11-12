@@ -4,10 +4,10 @@ import Loader from './loader';
 
 export default class RequestStatus extends Component {
 	render() {
-		const { error, status } = this.props;
-		if (error) {
-			return <DisplayError error={error} />;
-		} else if (status === 'pending') {
+		const { err, inProgress } = this.props;
+		if (err) {
+			return <DisplayError error={err} />;
+		} else if (inProgress) {
 			return <Loader />;
 		} /*else if (status === 'done') {
 			return <div className="alert-box success radius">Done</div>;

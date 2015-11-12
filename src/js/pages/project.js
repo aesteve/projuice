@@ -1,42 +1,44 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { protect } from '../utils/composition';
+import { fetchProjects } from '../actions/projects';
+// sub-components
 import Loader from '../components/loader';
 import Issues from '../components/issues';
 import TeamMembers from '../components/team-members';
-import ApiClient from '../io/api';
 import RequestStatus from '../components/request-status';
-import { injectResponseAsState } from '../components/request-utils';
 
-export default class Project extends Component {
+const mapStateToProps = state => {
+	return {
+		projects: state.projects
+	};
+}
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			status: null
-		};
-		this.apiClient = new ApiClient(this.props.history);
-	}
+class Project extends Component {
 
 	componentDidMount() {
-		this.setState({
-			status: 'pending'
-		});
-		this.apiClient.get('/projects/' + this.props.params.projectId + '/', injectResponseAsState(this, 'project'));
+		const { projectId } = this.props.params;
+		if (!this.props.projects.projects[projectId]) {
+			this.props.dispatch(fetchProjects()); // FIXME : fetch a single one
+		}
 	}
 
 	render() {
-		const { project } = this.state;
+		const { projects } = this.props;
+		const { projectId } = this.props.params;
+		const proj = projects.projects[projectId];
 		return (
 			<div>
-				<RequestStatus {...this.state} />
-				{project &&
+				<RequestStatus {...projects} />
+				{proj &&
 					<div>
-						<h1>{project.name}</h1>
+						<h1>{proj.name}</h1>
 						<div className="project-description">
-							{project.description}
+							{proj.description}
 						</div>
 						<div className="project-infos">
-							<Issues project={project} />
-							<TeamMembers project={project} />
+							<Issues project={proj} />
+							<TeamMembers project={proj} />
 						</div>
 					</div>
 				}
@@ -45,4 +47,4 @@ export default class Project extends Component {
 	}
 }
 
-Project.contextTypes = {history: PropTypes.history};
+export default protect(connect(mapStateToProps)(Project));

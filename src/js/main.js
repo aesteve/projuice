@@ -17,4 +17,4 @@ class ProviderApp extends Component {
 	}
 }
 
-render(<ProviderApp />, document.body)
+render(<ProviderApp />, document.getElementById('app'));

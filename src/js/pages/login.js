@@ -29,7 +29,7 @@ export default class LoginForm extends Component {
 		const { loginState } = newProps;
 		if (loginState && !loginState.inProgress && loginState.accessToken) {
 			// login success
-			this.context.history.pushState(null, '/projects');
+			this.context.history.pushState(null, '/');
 		}
 	}
 

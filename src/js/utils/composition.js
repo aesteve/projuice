@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-export const privatePage = Composed => class extends Component {
+const mapStateToProps = state => {
+	return {
+		tokenStatus: state.tokenStatus
+	};
+}
+
+const privatePage = Composed => class extends Component {
 
 	componentDidMount() {
 		this.checkUser(this.props);
@@ -11,7 +18,6 @@ export const privatePage = Composed => class extends Component {
 	}
 
 	checkUser(props) {
-		console.log(props);
 		const { tokenStatus } = props;
 		if (!tokenStatus.authorized) {
 			this.props.history.pushState(null, '/login');
@@ -23,3 +29,7 @@ export const privatePage = Composed => class extends Component {
 	}
 
 };
+
+export function protect(page) {
+	return connect(mapStateToProps)(privatePage(page));
+}

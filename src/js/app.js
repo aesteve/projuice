@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { PropTypes } from 'react-router';
 import { connect } from 'react-redux';
 import Menu from './components/menu';
+import { fetchMyInfos } from './actions/users';
 
 class App extends Component {
 

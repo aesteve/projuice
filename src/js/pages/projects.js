@@ -1,16 +1,16 @@
-import React, { Component, PropTypes } from 'react';
+import _ from 'lodash';
+import React, { Component } from 'react';
+import { PropTypes } from 'react-router';
+import { connect } from 'react-redux';
+import { protect } from '../utils/composition';
+import { fetchProjects } from '../actions/projects';
+// sub-components
 import ProjectPreview from '../components/project-preview';
 import RequestStatus from '../components/request-status';
-import { connect } from 'react-redux';
-import { privatePage } from '../utils/composition';
-import { fetchProjects } from '../actions/projects';
-import _ from 'lodash';
 
 const mapStateToProps = state => {
 	return {
-		projects: state.projects,
-		user: state.myInfos,
-		tokenStatus: state.tokenStatus
+		projects: state.projects
 	};
 };
 
@@ -25,8 +25,8 @@ export default class Projects extends Component {
 		if (!projects.projects) {
 			return null;
 		}
-		const proj = projects.projects;
-		const projectsJSX = _.map(proj, (projectId, project) => {
+		const projs = projects.projects;
+		const projectsJSX = _.map(projs, (project, projectId) => {
 			return <ProjectPreview key={projectId} project={project} />;
 		});
 		return (
@@ -40,4 +40,4 @@ export default class Projects extends Component {
 
 Projects.contextTypes = {history: PropTypes.history};
 
-export default connect(mapStateToProps)(privatePage(Projects));
+export default protect(connect(mapStateToProps)(Projects));

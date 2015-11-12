@@ -19,19 +19,19 @@ export default function updateContext(state = initialState, action = {}) {
 				err: null,
 				projects: projects
 			};
-			case FETCH_PROJECTS_FINISHED:
-				const { res } = action;
-				if (res && res.body) {
-					res.body.forEach(project => {
-						projects[project.id] = project;
-					});
-				}
-				return {
-					err: action.err,
-					inProgress:false,
-					projects: projects
-				};
-			default:
-				return state;
+		case FETCH_PROJECTS_FINISHED:
+			const { res } = action;
+			if (res && res.body) {
+				res.body.forEach(project => {
+					projects[project.id] = project;
+				});
+			}
+			return {
+				err: action.err,
+				inProgress:false,
+				projects: projects
+			};
+		default:
+			return state;
 	}
 }
