@@ -20,12 +20,12 @@ public class Issue {
 
 	private String projectId;
 
-	private Set<ProjuiceUser> assignees;
+	private Set<String> assignees;
 	private Set<Label> labels;
 
 	public Issue() {
-		labels = new TreeSet<Label>();
-		assignees = new TreeSet<ProjuiceUser>();
+		labels = new TreeSet<>();
+		assignees = new TreeSet<>();
 		status = IssueStatus.WAITING;
 	}
 
@@ -81,11 +81,11 @@ public class Issue {
 		this.description = description;
 	}
 
-	public Set<ProjuiceUser> getAssignees() {
+	public Set<String> getAssignees() {
 		return assignees;
 	}
 
-	public void setAssignees(Set<ProjuiceUser> assignees) {
+	public void setAssignees(Set<String> assignees) {
 		this.assignees = assignees;
 	}
 
@@ -114,6 +114,6 @@ public class Issue {
 	}
 
 	public void assign(ProjuiceUser user) {
-		assignees.add(user);
+		assignees.add(user.getUsername());
 	}
 }
