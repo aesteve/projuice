@@ -26,10 +26,8 @@ public class IssuesFixture extends Fixture {
 
 	@Override
 	public void startUp(Vertx vertx, Future<Void> future) {
-		System.out.println("FIND USER");
 		mongo.findBy(new FindBy<ProjuiceUser>(ProjuiceUser.class, "username", "Arnaud"), res -> {
 			ProjuiceUser arnaud = res.result();
-			System.out.println("FIND PROJECT");
 			mongo.findBy(new FindBy<Project>(Project.class, "id", ProjectsFixture.ProjuiceID), res2 -> {
 				Project projuice = res2.result();
 				if (projuice == null) {
@@ -42,7 +40,12 @@ public class IssuesFixture extends Fixture {
 				issue.setType(IssueType.ENHANCEMENT);
 				issue.setDescription("## Design the whole projuice working model");
 				issue.assign(arnaud);
-				future.complete();
+				mongo.create(issue, createRes -> {
+					if (createRes.failed()) {
+						createRes.cause().printStackTrace();
+					}
+					future.complete();
+				});
 			});
 		});
 	}
