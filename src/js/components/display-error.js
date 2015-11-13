@@ -23,10 +23,10 @@ export default class DisplayError extends Component {
 	}
 
 	render() {
-		const { err } = this.props;
-		console.error(err);
+		const { error } = this.props;
+		console.error(error);
 		return (
-			<div className="alert-box alert radius">{this.getMsg(err)}</div>
+			<div className="alert-box alert radius">{this.getMsg(error)}</div>
 		);
 	}
 }
