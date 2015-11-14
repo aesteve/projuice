@@ -1,4 +1,3 @@
-import ApiClient from '../io/api';
 import {
 	FETCH_PROJECTS_PROGRESS,
 	FETCH_PROJECTS_FINISHED

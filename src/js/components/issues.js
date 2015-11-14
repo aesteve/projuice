@@ -15,7 +15,8 @@ class Issue extends Component {
 		const { issue } = this.props;
 		return (
 			<div className="issue">
-				{issue.type}
+				<div className="issue-header">{issue.name}</div>
+				<div className="issue-content">{issue.description}</div>
 			</div>
 		);
 	}

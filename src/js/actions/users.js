@@ -1,6 +1,8 @@
 import {
 	FETCH_INFO_PROGRESS,
 	FETCH_INFO_FINISHED,
+	FETCH_USERS_PROGRESS,
+	FETCH_USERS_FINISHED,
 	UNAUTHORIZED
 } from './action-types';
 import { dispatchApiResult } from '../utils/redux-utils';
