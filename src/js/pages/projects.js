@@ -30,7 +30,7 @@ export default class Projects extends Component {
 			return <ProjectPreview key={projectId} project={project} />;
 		});
 		return (
-			<div>
+			<div className="projects block">
 				<RequestStatus {...this.state} />
 				{projectsJSX}
 			</div>

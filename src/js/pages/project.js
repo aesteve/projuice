@@ -31,14 +31,14 @@ class Project extends Component {
 			<div>
 				<RequestStatus {...projects} />
 				{proj &&
-					<div>
+					<div className="project block">
 						<h1>{proj.name}</h1>
-						<div className="project-description">
+						<div className="row block project-description">
 							{proj.description}
 						</div>
-						<div className="project-infos">
-							<Issues project={proj} />
-							<TeamMembers project={proj} />
+						<div className="project-infos row">
+							<div className="large-6 columns"><Issues project={proj} /></div>
+							<div className="large-6 columns"><TeamMembers project={proj} /></div>
 						</div>
 					</div>
 				}

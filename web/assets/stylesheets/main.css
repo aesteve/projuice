@@ -365,6 +365,7 @@ ul.striped-list li:last-child {
 
 h1 {
     font-size:1.2em;
+		text-align: center;
 }
 
 h2 {
@@ -379,4 +380,9 @@ h2 {
 
 #login-form table {
 	width: 100%;
+}
+
+.block {
+	border: 1px solid #CCC;
+	padding: 3px;
 }

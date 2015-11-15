@@ -42,7 +42,7 @@ class Issues extends Component {
 			});
 		}
 		return (
-			<div className="issues">
+			<div className="issues block">
 				<RequestStatus {...issues} />
 				{issuesJSX}
 			</div>
