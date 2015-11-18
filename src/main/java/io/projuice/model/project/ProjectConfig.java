@@ -3,7 +3,7 @@ package io.projuice.model.project;
 import java.util.List;
 
 public class ProjectConfig {
-	
+
 	private List<Phase> phases;
 	private List<Workflow> workflows;
 
@@ -22,5 +22,5 @@ public class ProjectConfig {
 	public void setWorkflows(List<Workflow> workflows) {
 		this.workflows = workflows;
 	}
-	
+
 }
