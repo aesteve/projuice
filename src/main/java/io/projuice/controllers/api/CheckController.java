@@ -11,7 +11,7 @@ import com.github.aesteve.nubes.orm.queries.FindBy;
 import com.github.aesteve.vertx.nubes.annotations.services.Service;
 import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
 
-public class CheckController {
+public abstract class CheckController {
 
 	@Service(MongoNubes.MONGO_SERVICE_NAME)
 	protected MongoService mongo;

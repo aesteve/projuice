@@ -37,13 +37,13 @@ import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
 
 @Controller("/api/1/projects")
 @ContentType("application/json")
+@Auth(method = API_TOKEN, authority = LOGGED_IN)
 public class ProjectApiController extends CheckController {
 
 	@Service(MongoNubes.MONGO_SERVICE_NAME)
 	private MongoService mongo;
 
 	@GET
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	public void list(RoutingContext context, PaginationContext pageContext, @User ProjuiceUser loggedUser, Payload<List<Project>> payload) {
 		mongo.listAndCount(new FindBy<>(Project.class), 0, Integer.MAX_VALUE, AsyncUtils.failOr(context, res -> {
 			List<Project> projects = res.result().list;
@@ -56,7 +56,6 @@ public class ProjectApiController extends CheckController {
 
 	@POST
 	@Create
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	public void createProject(RoutingContext context, @RequestBody Project project, Payload<Project> payload, @User ProjuiceUser loggedUser) throws BadRequestException {
 		try {
 			project.validate();
@@ -79,7 +78,6 @@ public class ProjectApiController extends CheckController {
 	}
 
 	@GET("/:projectId/")
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	@RetrieveById
 	@ProjectRoleCheck(Role.ADMIN)
 	public FindBy<Project> getProject(@Param String projectId) {
@@ -89,7 +87,6 @@ public class ProjectApiController extends CheckController {
 	@PUT("/:projectId/")
 	@PATCH("/:projectId/")
 	@Update
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	@ProjectRoleCheck(Role.ADMIN)
 	public UpdateBy<Project> updateProject(RoutingContext context, @Param String projectId, @RequestBody Project createdProject) {
 		return new UpdateBy<>(createdProject, "id", projectId);

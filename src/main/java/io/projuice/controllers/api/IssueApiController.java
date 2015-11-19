@@ -31,11 +31,11 @@ import com.github.aesteve.vertx.nubes.marshallers.Payload;
 
 @Controller("/api/1/projects/:projectId/issues")
 @ContentType("application/json")
+@Auth(method = API_TOKEN, authority = LOGGED_IN)
 public class IssueApiController extends CheckController {
 
 	@GET
 	@RetrieveByQuery
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	@ProjectRoleCheck(Role.MEMBER)
 	public FindBy<Issue> getProjectIssues(
 			PaginationContext pageContext,
@@ -55,7 +55,6 @@ public class IssueApiController extends CheckController {
 
 	@POST
 	@Create
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	@ProjectRoleCheck(Role.MEMBER)
 	public Issue openIssue(@RequestBody Issue issue, @Param String projectId) throws BadRequestException {
 		issue.setProjectId(projectId);
@@ -71,7 +70,6 @@ public class IssueApiController extends CheckController {
 
 	@GET("/:issueId/")
 	@RetrieveById
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	@ProjectRoleCheck(Role.MEMBER)
 	public FindBy<Issue> getIssue(@Param String issueId) {
 		return new FindBy<>(Issue.class, "id", issueId);
@@ -80,7 +78,6 @@ public class IssueApiController extends CheckController {
 	@PUT("/:issueId/")
 	@PATCH("/:issueId/")
 	@Update
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	@ProjectRoleCheck(Role.MEMBER)
 	public void updateIssue(
 			RoutingContext context,
@@ -102,7 +99,6 @@ public class IssueApiController extends CheckController {
 	@PUT("/:issueId/close")
 	@PATCH("/:issueId/close")
 	@Update
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	public void closeIssue(
 			RoutingContext context,
 			Payload<UpdateBy<Issue>> payload,
@@ -120,7 +116,6 @@ public class IssueApiController extends CheckController {
 	@PUT("/:issueId/assign")
 	@PATCH("/:issueId/assign")
 	@Update
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	@ProjectRoleCheck(Role.MEMBER)
 	public void assignIssue(
 			RoutingContext context,
