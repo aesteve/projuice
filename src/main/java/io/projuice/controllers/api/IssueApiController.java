@@ -2,8 +2,9 @@ package io.projuice.controllers.api;
 
 import static com.github.aesteve.vertx.nubes.auth.AuthMethod.API_TOKEN;
 import static io.projuice.auth.ProjuiceAuthProvider.LOGGED_IN;
+import io.projuice.annotations.ProjectRoleCheck;
 import io.projuice.model.Issue;
-import io.projuice.model.ProjuiceUser;
+import io.projuice.model.Role;
 import io.projuice.model.issue.IssueStatus;
 import io.projuice.model.issue.IssueType;
 import io.vertx.ext.web.RoutingContext;
@@ -16,7 +17,6 @@ import com.github.aesteve.nubes.orm.queries.FindBy;
 import com.github.aesteve.nubes.orm.queries.UpdateBy;
 import com.github.aesteve.vertx.nubes.annotations.Controller;
 import com.github.aesteve.vertx.nubes.annotations.auth.Auth;
-import com.github.aesteve.vertx.nubes.annotations.auth.User;
 import com.github.aesteve.vertx.nubes.annotations.mixins.ContentType;
 import com.github.aesteve.vertx.nubes.annotations.params.Param;
 import com.github.aesteve.vertx.nubes.annotations.params.RequestBody;
@@ -36,80 +36,56 @@ public class IssueApiController extends CheckController {
 	@GET
 	@RetrieveByQuery
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public void getProjectIssues(
-			RoutingContext context,
-			@User ProjuiceUser currentUser,
-			Payload<FindBy<Issue>> payload,
+	@ProjectRoleCheck(Role.MEMBER)
+	public FindBy<Issue> getProjectIssues(
 			PaginationContext pageContext,
 			@Param String projectId,
 			@Param IssueStatus status,
 			@Param IssueType type) {
 
-		checkUserHasAccessToProject(context, currentUser, projectId, project -> {
-			FindBy<Issue> findBy = new FindBy<>(Issue.class, "projectId", projectId);
-			if (status != null) {
-				findBy.eq("status", status);
-			}
-			if (type != null) {
-				findBy.eq("type", type);
-			}
-			payload.set(findBy);
-			context.next();
-		});
-
+		FindBy<Issue> findBy = new FindBy<>(Issue.class, "projectId", projectId);
+		if (status != null) {
+			findBy.eq("status", status);
+		}
+		if (type != null) {
+			findBy.eq("type", type);
+		}
+		return findBy;
 	}
 
 	@POST
 	@Create
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public void openIssue(
-			RoutingContext context,
-			@User ProjuiceUser currentUser,
-			Payload<Issue> payload,
-			@Param String projectId,
-			@RequestBody Issue issue) throws BadRequestException {
-
+	@ProjectRoleCheck(Role.MEMBER)
+	public Issue openIssue(@RequestBody Issue issue, @Param String projectId) throws BadRequestException {
+		issue.setProjectId(projectId);
 		try {
 			issue.validate();
 		} catch (ValidationException ve) {
 			throw new BadRequestException(ve);
 		}
 
-		checkUserHasAccessToProject(context, currentUser, projectId, project -> {
-			issue.generateId();
-			payload.set(issue);
-			context.next();
-		});
-
+		issue.generateId();
+		return issue;
 	}
 
 	@GET("/:issueId/")
 	@RetrieveById
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public void getIssue(
-			RoutingContext context,
-			Payload<FindBy<Issue>> payload,
-			@User ProjuiceUser currentUser,
-			@Param String projectId,
-			@Param String issueId) {
-
-		checkUserHasAccessToProject(context, currentUser, projectId, project -> {
-			payload.set(new FindBy<>(Issue.class, "id", issueId));
-			context.next();
-		});
-
+	@ProjectRoleCheck(Role.MEMBER)
+	public FindBy<Issue> getIssue(@Param String issueId) {
+		return new FindBy<>(Issue.class, "id", issueId);
 	}
 
 	@PUT("/:issueId/")
 	@PATCH("/:issueId/")
 	@Update
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
+	@ProjectRoleCheck(Role.MEMBER)
 	public void updateIssue(
 			RoutingContext context,
 			Payload<UpdateBy<Issue>> payload,
-			@User ProjuiceUser currentUser,
 			@RequestBody Issue issue,
-			@Param String projectId,
 			@Param String issueId) throws BadRequestException {
 
 		try {
@@ -117,13 +93,10 @@ public class IssueApiController extends CheckController {
 		} catch (ValidationException ve) {
 			throw new BadRequestException(ve);
 		}
-
-		checkUserHasAccessToProject(context, currentUser, projectId, project -> {
-			issue.setId(issueId);
+		checkIssueExists(context, issueId, existingIssue -> {
 			payload.set(new UpdateBy<>(issue, "id", issueId));
 			context.next();
 		});
-
 	}
 
 	@PUT("/:issueId/close")
@@ -133,17 +106,13 @@ public class IssueApiController extends CheckController {
 	public void closeIssue(
 			RoutingContext context,
 			Payload<UpdateBy<Issue>> payload,
-			@User ProjuiceUser currentUser,
 			@Param String projectId,
 			@Param String issueId) {
 
-		checkUserHasAccessToProject(context, currentUser, projectId, project -> {
-			checkIssueExists(context, issueId, issue -> {
-				issue.close();
-				issue.setId(issueId);
-				payload.set(new UpdateBy<>(issue, "id", issueId));
-				context.next();
-			});
+		checkIssueExists(context, issueId, issue -> {
+			issue.close();
+			payload.set(new UpdateBy<>(issue, "id", issueId));
+			context.next();
 		});
 
 	}
@@ -152,21 +121,19 @@ public class IssueApiController extends CheckController {
 	@PATCH("/:issueId/assign")
 	@Update
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
+	@ProjectRoleCheck(Role.MEMBER)
 	public void assignIssue(
 			RoutingContext context,
 			Payload<UpdateBy<Issue>> payload,
-			@User ProjuiceUser currentUser,
 			@Param(mandatory = true) String assignee,
 			@Param String projectId,
 			@Param String issueId) {
 
-		checkUserHasAccessToProject(context, currentUser, projectId, project -> {
-			checkIssueExists(context, issueId, issue -> {
-				checkUserExists(context, assignee, user -> {
-					issue.assign(user);
-					payload.set(new UpdateBy<>(issue, "id", issueId));
-					context.next();
-				});
+		checkIssueExists(context, issueId, issue -> {
+			checkUserExists(context, assignee, user -> {
+				issue.assign(user);
+				payload.set(new UpdateBy<>(issue, "id", issueId));
+				context.next();
 			});
 		});
 
