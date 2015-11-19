@@ -14,6 +14,7 @@ import com.github.aesteve.nubes.orm.annotations.RetrieveByQuery;
 import com.github.aesteve.nubes.orm.mongo.MongoNubes;
 import com.github.aesteve.nubes.orm.mongo.services.MongoService;
 import com.github.aesteve.nubes.orm.queries.FindBy;
+import com.github.aesteve.nubes.orm.queries.UpdateBy;
 import com.github.aesteve.vertx.nubes.annotations.Controller;
 import com.github.aesteve.vertx.nubes.annotations.auth.Auth;
 import com.github.aesteve.vertx.nubes.annotations.auth.User;
@@ -39,11 +40,13 @@ public class UserApiController {
 
 	@POST
 	@Create
-	public ApiUser register(@RequestBody ProjuiceUser body) throws BadRequestException {
+	public UpdateBy<ProjuiceUser> register(@RequestBody ProjuiceUser body) throws BadRequestException {
 		if (!body.isValid()) {
 			throw new BadRequestException();
 		}
-		return body.toApi();
+		UpdateBy<ProjuiceUser> creation = new UpdateBy<>(body, null, null);
+		creation.findBy.setTransform(ProjuiceUser::toApi);
+		return creation;
 	}
 
 	// Logged users only

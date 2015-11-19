@@ -2,14 +2,17 @@ package io.projuice.controllers.api;
 
 import static com.github.aesteve.vertx.nubes.auth.AuthMethod.API_TOKEN;
 import static io.projuice.auth.ProjuiceAuthProvider.LOGGED_IN;
+import io.projuice.annotations.ProjectRoleCheck;
 import io.projuice.model.Project;
 import io.projuice.model.ProjuiceUser;
+import io.projuice.model.Role;
 import io.vertx.ext.web.RoutingContext;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.github.aesteve.nubes.orm.annotations.Create;
+import com.github.aesteve.nubes.orm.annotations.RetrieveById;
 import com.github.aesteve.nubes.orm.annotations.Update;
 import com.github.aesteve.nubes.orm.mongo.MongoNubes;
 import com.github.aesteve.nubes.orm.mongo.services.MongoService;
@@ -77,25 +80,18 @@ public class ProjectApiController extends CheckController {
 
 	@GET("/:projectId/")
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public void getProject(RoutingContext context, @Param String projectId, @User ProjuiceUser currentUser, Payload<Project> payload) {
-
-		checkUserHasAccessToProject(context, currentUser, projectId, project -> {
-			payload.set(project);
-			context.next();
-		});
-
+	@RetrieveById
+	@ProjectRoleCheck(Role.ADMIN)
+	public FindBy<Project> getProject(@Param String projectId) {
+		return new FindBy<>(Project.class, "id", projectId);
 	}
 
 	@PUT("/:projectId/")
 	@PATCH("/:projectId/")
 	@Update
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public void updateProject(RoutingContext context, @Param String projectId, @User ProjuiceUser currentUser, @RequestBody Project createdProject, Payload<UpdateBy<Project>> payload) {
-
-		checkUserIsProjectAdmin(context, currentUser, projectId, project -> {
-			payload.set(new UpdateBy<>(createdProject, "id", projectId));
-			context.next();
-		});
-
+	@ProjectRoleCheck(Role.ADMIN)
+	public UpdateBy<Project> updateProject(RoutingContext context, @Param String projectId, @RequestBody Project createdProject) {
+		return new UpdateBy<>(createdProject, "id", projectId);
 	}
 }

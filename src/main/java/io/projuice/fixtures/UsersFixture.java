@@ -4,8 +4,6 @@ import io.projuice.model.ProjuiceUser;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 
-import java.util.Arrays;
-
 import com.github.aesteve.nubes.orm.mongo.MongoNubes;
 import com.github.aesteve.nubes.orm.mongo.services.MongoService;
 import com.github.aesteve.nubes.orm.queries.FindBy;
@@ -34,7 +32,9 @@ public class UsersFixture extends Fixture {
 		justRegistered.setUsername("BrandNew");
 		justRegistered.setPassword("secret");
 		justRegistered.setGithubId("someonewhodoesntexist");
-		mongo.createMany(Arrays.asList(arnaud, justRegistered), AsyncUtils.ignoreResult(future));
+		mongo.create(arnaud, res -> {
+			mongo.create(justRegistered, AsyncUtils.ignoreResult(future));
+		});
 	}
 
 	@Override
