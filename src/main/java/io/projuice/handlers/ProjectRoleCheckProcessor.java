@@ -48,8 +48,4 @@ public class ProjectRoleCheckProcessor extends NoopAfterAllProcessor implements 
 		}));
 	}
 
-	@Override
-	public Class<? extends ProjectRoleCheck> getAnnotationType() {
-		return ProjectRoleCheck.class;
-	}
 }
