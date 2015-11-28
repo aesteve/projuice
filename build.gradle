@@ -3,12 +3,12 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'maven'
+	id 'application'
 	id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 
 group='io.projuice'
 version='0.1-SNAPSHOT'
-
 
 repositories {
 	mavenCentral()
@@ -19,11 +19,10 @@ def NUBES_VERSION = '0.1-SNAPSHOT'
 def VERTX_VERSION = '3.1.0'
 
 dependencies {
-
 	compile "com.github.aesteve:nubes-mongo:${NUBES_VERSION}" // Nubes as transitive dependency
 	compile "io.vertx:vertx-web-templ-handlebars:${VERTX_VERSION}"
 	compile "io.vertx:vertx-redis-client:${VERTX_VERSION}"
-
+	
 	testCompile "io.vertx:vertx-unit:${VERTX_VERSION}"
 	testCompile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.50.0'
 	testCompile 'junit:junit:4.12'
@@ -33,38 +32,30 @@ compileJava {
 	options.compilerArgs << '-parameters'
 }
 
+mainClassName = 'io.vertx.core.Launcher'
+def mainVerticle = 'io.projuice.Server'
+
 shadowJar  {
 	classifier = ''
-	manifest {
-		attributes 'Main-Class': 'io.vertx.core.Starter'
-		attributes 'Main-Verticle': 'java:io.projuice.Server'
-	}
 	mergeServiceFiles {
 		include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
-	}
-	dependencies {
-		exclude(dependency('io.vertx:codegen'))
-		exclude(dependency('junit:junit'))
-		exclude(dependency('org.mvel:mvel2'))
 	}
 	into 'web', {
 		from 'web'
 	}
 }
 
-task start(dependsOn: shadowJar) << {
-	javaexec {
-		main="-jar"
-		args=[
-			shadowJar.archivePath,
-			"-conf",
-			"conf.json"
-		]
-	}
+run {
+	args = [
+		'run',
+		mainVerticle,
+		"-conf",
+		"conf.json"
+	]
 }
 
 test.outputs.upToDateWhen { false }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '2.8'
+	gradleVersion = '2.9'
 }

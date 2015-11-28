@@ -1,9 +1,9 @@
 package io.projuice.controllers.views;
 
+import io.vertx.core.http.HttpServerResponse;
+
 import com.github.aesteve.vertx.nubes.annotations.Controller;
 import com.github.aesteve.vertx.nubes.annotations.routing.http.GET;
-
-import io.vertx.core.http.HttpServerResponse;
 
 @Controller("/")
 public class PublicViews {
@@ -12,5 +12,5 @@ public class PublicViews {
 	public void index(HttpServerResponse response) {
 		response.sendFile("web/views/index.html");
 	}
-	
+
 }

@@ -23,6 +23,17 @@ public class ProjectSpec extends ProjuiceTestBase {
 	}
 
 	@Test
+	public void getProjectIDontBelongTo(TestContext context) {
+		Async async = context.async();
+		withStandardTokenDo(context, token -> {
+			getJSON(token, "/api/1/projects/" + ProjectsFixture.ProjuiceID + "/", response -> {
+				context.assertEquals(404, response.statusCode());
+				async.complete();
+			});
+		});
+	}
+
+	@Test
 	public void getProjectsIBelongTo(TestContext context) {
 		Async async = context.async();
 		withAdminTokenDo(context, token -> {

@@ -8,6 +8,9 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
 
+import java.util.Arrays;
+import java.util.function.Predicate;
+
 import org.boon.json.annotations.JsonIgnore;
 
 public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
@@ -56,6 +59,14 @@ public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 		return username != null && emailAddress != null && password != null;
 	}
 
+	public boolean hasRoleInProject(Project project, Role role) {
+		return project.getParticipants().stream().anyMatch(hasRole(role));
+	}
+
+	public boolean hasRoleInProject(Project project, Role[] roles) {
+		return project.getParticipants().stream().anyMatch(hasRole(roles));
+	}
+
 	public boolean isMemberOf(Project project) {
 		return project.getParticipants().stream().anyMatch(this::belongsToRole);
 	}
@@ -66,6 +77,31 @@ public class ProjuiceUser implements Comparable<ProjuiceUser>, User {
 
 	public boolean belongsToRole(UserRoleInProject role) {
 		return role.getUser().equals(username);
+	}
+
+	public Predicate<UserRoleInProject> hasRole(Role role) {
+		return userRole -> {
+			if (userRole == null) {
+				return false;
+			}
+			Role userRoleRole = userRole.getRole();
+			String roleUser = userRole.getUser();
+			return roleUser.equals(username) && userRoleRole.isAtLeast(role);
+		};
+	}
+
+	public Predicate<UserRoleInProject> hasRole(Role[] roles) {
+		return userRole -> {
+			if (userRole == null) {
+				return false;
+			}
+			Role userRoleRole = userRole.getRole();
+			String roleUser = userRole.getUser();
+			if (!roleUser.equals(username)) {
+				return false;
+			}
+			return Arrays.asList(roles).stream().anyMatch(userRoleRole::isAtLeast);
+		};
 	}
 
 	public boolean isAdmin(UserRoleInProject role) {

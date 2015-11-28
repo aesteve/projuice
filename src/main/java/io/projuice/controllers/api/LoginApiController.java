@@ -12,7 +12,7 @@ import io.vertx.ext.web.RoutingContext;
 
 import com.github.aesteve.vertx.nubes.annotations.Controller;
 import com.github.aesteve.vertx.nubes.annotations.auth.Auth;
-import com.github.aesteve.vertx.nubes.annotations.auth.User;
+import com.github.aesteve.vertx.nubes.annotations.auth.Logout;
 import com.github.aesteve.vertx.nubes.annotations.mixins.ContentType;
 import com.github.aesteve.vertx.nubes.annotations.params.RequestBody;
 import com.github.aesteve.vertx.nubes.annotations.routing.http.POST;
@@ -63,8 +63,6 @@ public class LoginApiController {
 
 	@POST("/logout")
 	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public void logout(@User ProjuiceUser current, Payload<Void> payload) {
-		authProvider.clearFor(current);
-		payload.set(null);
-	}
+	@Logout
+	public void logout() {}
 }

@@ -2,14 +2,17 @@ package io.projuice.controllers.api;
 
 import static com.github.aesteve.vertx.nubes.auth.AuthMethod.API_TOKEN;
 import static io.projuice.auth.ProjuiceAuthProvider.LOGGED_IN;
+import io.projuice.annotations.ProjectRoleCheck;
 import io.projuice.model.Project;
 import io.projuice.model.ProjuiceUser;
+import io.projuice.model.Role;
 import io.vertx.ext.web.RoutingContext;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.github.aesteve.nubes.orm.annotations.Create;
+import com.github.aesteve.nubes.orm.annotations.RetrieveById;
 import com.github.aesteve.nubes.orm.annotations.Update;
 import com.github.aesteve.nubes.orm.mongo.MongoNubes;
 import com.github.aesteve.nubes.orm.mongo.services.MongoService;
@@ -34,13 +37,13 @@ import com.github.aesteve.vertx.nubes.utils.async.AsyncUtils;
 
 @Controller("/api/1/projects")
 @ContentType("application/json")
+@Auth(method = API_TOKEN, authority = LOGGED_IN)
 public class ProjectApiController extends CheckController {
 
 	@Service(MongoNubes.MONGO_SERVICE_NAME)
 	private MongoService mongo;
 
 	@GET
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	public void list(RoutingContext context, PaginationContext pageContext, @User ProjuiceUser loggedUser, Payload<List<Project>> payload) {
 		mongo.listAndCount(new FindBy<>(Project.class), 0, Integer.MAX_VALUE, AsyncUtils.failOr(context, res -> {
 			List<Project> projects = res.result().list;
@@ -53,7 +56,6 @@ public class ProjectApiController extends CheckController {
 
 	@POST
 	@Create
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
 	public void createProject(RoutingContext context, @RequestBody Project project, Payload<Project> payload, @User ProjuiceUser loggedUser) throws BadRequestException {
 		try {
 			project.validate();
@@ -76,26 +78,17 @@ public class ProjectApiController extends CheckController {
 	}
 
 	@GET("/:projectId/")
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public void getProject(RoutingContext context, @Param String projectId, @User ProjuiceUser currentUser, Payload<Project> payload) {
-
-		checkUserHasAccessToProject(context, currentUser, projectId, project -> {
-			payload.set(project);
-			context.next();
-		});
-
+	@RetrieveById
+	@ProjectRoleCheck(Role.ADMIN)
+	public FindBy<Project> getProject(@Param String projectId) {
+		return new FindBy<>(Project.class, "id", projectId);
 	}
 
 	@PUT("/:projectId/")
 	@PATCH("/:projectId/")
 	@Update
-	@Auth(method = API_TOKEN, authority = LOGGED_IN)
-	public void updateProject(RoutingContext context, @Param String projectId, @User ProjuiceUser currentUser, @RequestBody Project createdProject, Payload<UpdateBy<Project>> payload) {
-
-		checkUserIsProjectAdmin(context, currentUser, projectId, project -> {
-			payload.set(new UpdateBy<>(createdProject, "id", projectId));
-			context.next();
-		});
-
+	@ProjectRoleCheck(Role.ADMIN)
+	public UpdateBy<Project> updateProject(RoutingContext context, @Param String projectId, @RequestBody Project createdProject) {
+		return new UpdateBy<>(createdProject, "id", projectId);
 	}
 }

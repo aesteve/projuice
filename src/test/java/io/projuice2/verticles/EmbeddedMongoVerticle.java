@@ -1,4 +1,4 @@
-package io.projuice.verticles;
+package io.projuice2.verticles;
 
 import integration.ProjuiceTestBase;
 import io.vertx.core.AbstractVerticle;
