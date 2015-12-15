@@ -15,15 +15,12 @@ repositories {
 	mavenLocal()
 }
 
-def NUBES_VERSION = '0.1-SNAPSHOT'
-def VERTX_VERSION = '3.1.0'
-
 dependencies {
-	compile "com.github.aesteve:nubes-mongo:${NUBES_VERSION}" // Nubes as transitive dependency
-	compile "io.vertx:vertx-web-templ-handlebars:${VERTX_VERSION}"
-	compile "io.vertx:vertx-redis-client:${VERTX_VERSION}"
+	compile "com.github.aesteve:nubes-mongo:$nubesVersion" // Nubes as transitive dependency
+	compile "io.vertx:vertx-web-templ-handlebars:$vertxVersion"
+	compile "io.vertx:vertx-redis-client:$vertxVersion"
 	
-	testCompile "io.vertx:vertx-unit:${VERTX_VERSION}"
+	testCompile "io.vertx:vertx-unit:$vertxVersion"
 	testCompile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.50.0'
 	testCompile 'junit:junit:4.12'
 }
